@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}  {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-body px-0 pt-0 pb-2">
+            <div class="table-responsive p-0">
+                <div style="padding: 20px">
+                   <div class="row">
+                     <div class="col-6 d-flex align-items-center" style="margin: 5px">
+                        <h6 class="mb-0">Equation: </h6>
+                        </div>
+                            <textarea type="text" id="equation-area"  class="form-control" rows="2"  disabled style="font-size: 20px;"></textarea>
+                        </div>
+                     </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-bottom: 20px">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-body p-4">
+              <div class="row">
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark border-radius-md" src="{% static 'calculator/images/one.png' %}" id="one-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark border-radius-md" src="{% static 'calculator/images/two.png' %}" id="two-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark border-radius-md" src="{% static 'calculator/images/three.png' %}" id="three-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark border-radius-md" src="{% static 'calculator/images/four.png' %}" id="four-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark border-radius-md" src="{% static 'calculator/images/five.png' %}" id="five-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark border-radius-md" src="{% static 'calculator/images/six.png' %}" id="six-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark border-radius-md" src="{% static 'calculator/images/seven.png' %}" id="seven-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark border-radius-md" src="{% static 'calculator/images/eight.png' %}" id="eight-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark border-radius-md" src="{% static 'calculator/images/nine.png' %}" id="nine-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark border-radius-md" src="{% static 'calculator/images/zero.png' %}" id="zero-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark border-radius-md" src="{% static 'calculator/images/addition.png' %}" id="addition-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark  border-radius-md" src="{% static 'calculator/images/substaction.png' %}" id="substraction-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark  border-radius-md" src="{% static 'calculator/images/multiplication.png' %}" id="multiplication-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark  border-radius-md" src="{% static 'calculator/images/division.png' %}" id="division-button">
+                </div>
+                <div class="col-2 " style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark  border-radius-md" src="{% static 'calculator/images/opening_bracket.png' %}" id="open-bracket-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark  border-radius-md" src="{% static 'calculator/images/closing_bracket.png' %}" id="close-bracket-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-dark  border-radius-md" src="{% static 'calculator/images/dot.png' %}" id="dot-button">
+                </div>
+                <div class="col-2" style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md" src="{% static 'calculator/images/c.png' %}" id="c-button">
+                </div>
+                <div class="col-2 " style="margin: 5px;">
+                    <img  class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md" src="{% static 'calculator/images/back.png' %}" id="back-button">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+
+            <div class="row">
+                <div class="card">
+                    <div class="card-body p-4">
+                      <div class="row">
+                        <div class="col-6 d-flex align-items-center" style="margin: 5px">
+                            <h6 class="mb-0">Result: </h6>
+                            </div>
+                                <textarea type="text" id="result-area"  class="form-control" rows="3"  disabled style="font-size: 20px;"></textarea>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+            <div class="row" style="margin-top: 10px;">
+                <div class="card">
+                    <div class="card-body p-4">
+                      <div class="row">
+                        <div class="col-12 text-md-center">
+                            <a class="btn bg-gradient-dark mb-0" id="calculate-button">Calculate </a>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-body p-4">
+              <div class="row">
+                  <h6 class="mb-0">Tech Stack: </h6>
+                  <a class="btn btn-block btn-social btn-github">
+                    <span class="fa fa-django" style="margin-right: 10px"></span> Django
+                  </a>
+                  <a class="btn btn-block btn-social btn-github">
+                    <span class="fa fa-django" style="margin-right: 10px"></span> JQuery
+                  </a>
+                  <a class="btn btn-block btn-social btn-github">
+                    <span class="fa fa-django" style="margin-right: 10px"></span> SoftUI
+                  </a>
+                  <a class="btn btn-block btn-social btn-github">
+                    <span class="fa fa-django" style="margin-right: 10px"></span> BootStrap
+                  </a>
+                  <a class="btn btn-block btn-social btn-github">
+                    <span class="fa fa-django" style="margin-right: 10px"></span> Heroku
+                  </a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+        <!--start of Modals-->
+    <div class="modal fade " id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content  bg-gradient">
+            <div class="modal-header bg-gradient-info" >
+              <h5 class="modal-title text-white" id="alertModalLabel">Alert</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="alert alert-danger text-white font-weight-bold" role="alert" id="alert_modal_text">
+                  A simple primary alert—check it out!
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+              <button type="button" class="btn bg-gradient-dark" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+        <!--end of Modals-->
+    {% include "snippets/footer.html" %}
+
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+    <script>
+        $('#one-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '1');
+        });
+        $('#two-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '2');
+        });
+        $('#three-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '3');
+        });
+        $('#four-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '4');
+        });
+        $('#five-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '5');
+        });
+        $('#six-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '6');
+        });
+        $('#seven-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '7');
+        });
+        $('#eight-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '8');
+        });
+        $('#nine-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '9');
+        });
+        $('#zero-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '0');
+        });
+        $('#addition-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '+');
+        });
+        $('#substraction-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '-');
+        });
+        $('#multiplication-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '*');
+        });
+        $('#division-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '/');
+        });
+        $('#open-bracket-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '(');
+        });
+        $('#close-bracket-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + ')');
+        });
+        $('#dot-button').click(function (){
+           var text = $('#equation-area').val();
+           $('#equation-area').val(text + '.');
+        });
+        $('#c-button').click(function (){
+           $('#equation-area').val('');
+           $('#result-area').val('');
+        });
+        $('#back-button').click(function (){
+           var text = $('#equation-area').val();
+           text= text.substring(0, text.length - 1);
+           $('#equation-area').val(text);
+
+        });
+        $('#calculate-button').click(function () {
+            var text = $('#equation-area').val();
+            $.ajax({
+             type: 'POST',
+             url: "{% url 'calculate' %}",
+             data: {
+                 equation_string: text,
+                 csrfmiddlewaretoken: '{{ csrf_token }}'
+             },
+             dataType: 'json',
+             success: function(data) {
+                 $('#result-area').val(data.result);
+                 $('#alert_modal_text').text(data.message)
+                 $("#alertModal").modal('show');
+             },
+             error: function(data){
+                 $('#alert_modal_text').text(data.message)
+                 $("#alertModal").modal('show');
+             }
+        })
+        });
+    </script>
+{% endblock javascripts %}
