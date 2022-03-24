@@ -10,7 +10,8 @@ This project is implementation for the following topics related to technologies 
 3. Built Beautiful UI
 4. Used SoftUI
 5. Used Bootstrap
-
+6. Build Calculator Operations +, -, *, / as well as brackets are evaluated
+7. It will give error if brackets are not balanced or if we send empty equation.
 
 ## Tech Stack
 
@@ -23,7 +24,7 @@ This project is implementation for the following topics related to technologies 
 
 ## Demo
 
-Available at: 
+Available at: https://django-numerical-calculator.herokuapp.com/
 
 ## License
 
