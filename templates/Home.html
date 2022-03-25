@@ -80,9 +80,9 @@
                 <div class="col-2" style="margin: 5px;">
                     <img  class="icon icon-shape bg-gradient-dark  border-radius-md" src="{% static 'calculator/images/closing_bracket.png' %}" id="close-bracket-button">
                 </div>
-                <div class="col-2" style="margin: 5px;">
+<!--                 <div class="col-2" style="margin: 5px;">
                     <img  class="icon icon-shape bg-gradient-dark  border-radius-md" src="{% static 'calculator/images/dot.png' %}" id="dot-button">
-                </div>
+                </div> -->
                 <div class="col-2" style="margin: 5px;">
                     <img  class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md" src="{% static 'calculator/images/c.png' %}" id="c-button">
                 </div>
@@ -255,10 +255,10 @@
            var text = $('#equation-area').val();
            $('#equation-area').val(text + ')');
         });
-        $('#dot-button').click(function (){
-           var text = $('#equation-area').val();
-           $('#equation-area').val(text + '.');
-        });
+//         $('#dot-button').click(function (){
+//            var text = $('#equation-area').val();
+//            $('#equation-area').val(text + '.');
+//         });
         $('#c-button').click(function (){
            $('#equation-area').val('');
            $('#result-area').val('');
