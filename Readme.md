@@ -1,5 +1,5 @@
 
-# Django Simple Numeric Calculator
+# Numerical | Django Simple Numeric Calculator Web App
 
 This project is implementation for the following topics related to technologies used with Django
 
