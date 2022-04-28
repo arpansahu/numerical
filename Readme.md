@@ -5,13 +5,12 @@ This project is implementation for the following topics related to technologies 
 
 -Implemented Simple Numeric Calculator
     
-1. built home generic view
-2. Used JQuery for making html Dynamic
-3. Built Beautiful UI
-4. Used SoftUI
-5. Used Bootstrap
-6. Build Calculator Operations +, -, *, / as well as brackets are evaluated
-7. It will give error if brackets are not balanced or if we send empty equation.
+1. Used JQuery for making html Dynamic
+2. Built Beautiful UI
+3. Used SoftUI
+4. Used Bootstrap
+5. Build Calculator Operations +, -, *, / as well as brackets are evaluated
+6. It will give error if brackets are not balanced or if we send empty equation.
 
 ## Tech Stack
 
