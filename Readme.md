@@ -82,17 +82,31 @@ Push Heroku App
 
 Configure Heroku App
 ```bash
-  add all the env variables used from app setting page on heroku app dashboard.
+  heroku config:set GITHUB_USERNAME=joesmith
 
 ```
 Configuring Django App for Heroku
+
+Install whitenoise 
 ```
-    install whitenoise : pip install whitenoise 
-    include it in included_apps=[]
-    add whitenoise middleware
-    add: procfile
-    add: release-task.sh for running mutilple commands in run: section of procfile
+pip install whitenoise 
 ```
+
+Include it in Middlewares.
+```
+MIDDLEWARE = [
+    # ...
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    # ...
+]
+```
+
+Create Procfile and include this code snippet in it.
+```
+web: gunicorn django_calculator.wsgi
+```
+
 ## Documentation
 
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
