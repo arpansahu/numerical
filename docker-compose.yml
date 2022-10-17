@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    env_file: ./.env
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && gunicorn --bind 0.0.0.0:8003 django_calculator.wsgi"
+    image: django_calculator
+    container_name: django_calculator
+    volumes:
+      - .:/django_calculator
+    ports:
+      - "8003:8003"

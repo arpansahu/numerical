@@ -106,7 +106,30 @@ Create Procfile and include this code snippet in it.
 ```
 web: gunicorn django_calculator.wsgi
 ```
+## Enabling HSTS if Using EC2 to host with Nginx
 
+# Add to project/settings.py
+```
+SECURE_HSTS_SECONDS = 30  # Unit is seconds; *USE A SMALL VALUE FOR TESTING!*
+SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+```
+# Edit your Nginx Config File
+```
+location / {
+    proxy_pass          http://localhost:8000;
+    proxy_set_header    Host $host;
+    proxy_set_header    X-Forwarded-Proto $scheme;
+}
+```
+
+# Also Set Referrer-policy Header
+Add to project/settings.py
+
+```
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+```
 ## Documentation
 
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
