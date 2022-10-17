@@ -116,12 +116,45 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
+# AWS S3
+if not DEBUG:
+    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400'
+    }
+    AWS_LOCATION = 'static'
+    AWS_QUERYSTRING_AUTH = False
+    AWS_HEADERS = {
+        'Access-Control-Allow-Origin': '*',
+    }
+    # s3 static settings
+    AWS_STATIC_LOCATION = 'portfolio/django-numeric-calculator/static'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/'
+    STATICFILES_STORAGE = 'django_calculator.storage_backends.StaticStorage'
+    # s3 public media settings
+    AWS_PUBLIC_MEDIA_LOCATION = 'portfolio/django-numeric-calculator/media'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_PUBLIC_MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'django_calculator.storage_backends.PublicMediaStorage'
+    # s3 private media settings
+    PRIVATE_MEDIA_LOCATION = 'portfolio/django-numeric-calculator/private'
+    PRIVATE_FILE_STORAGE = 'django_calculator.storage_backends.PrivateMediaStorage'
+else:
+    # Static files (CSS, JavaScript, Images)
+    # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = 'static/'
+    STATIC_URL = '/static/'
+
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"), ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
