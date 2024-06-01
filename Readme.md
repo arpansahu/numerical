@@ -1094,9 +1094,9 @@ Note: agent {label 'local'} is used to specify which node will execute the jenki
 
 * Configure a Jenkins project from jenkins ui located at https://jenkins.arpansahu.me
 
-Make sure to use Pipline project and name it whatever you want I have named it as arpansahu_me
+Make sure to use Pipline project and name it whatever you want I have named it as numerical
 
-![Jenkins Project for ArpanSahuDotMe CRM Configuration File](/Arpan-Sahu-Dot-Me-Config-Jenkins-.png)
+![Jenkins Project for Numerical Configuration File](/numerical-Config-Jenkins-.png)
 
 In this above picture you can see credentials right? you can add your github credentials
 from Manage Jenkins on home Page --> Manage Credentials
