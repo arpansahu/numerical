@@ -199,11 +199,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # REFERRER POLICY
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
-# Caching
-
+#Caching
 CACHES = {
     "default": {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": config('REDISCLOUD_URL'),
     }
 }

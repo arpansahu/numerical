@@ -11,3 +11,4 @@ services:
       - .:/django_calculator
     ports:
       - "8003:8003"
+    restart: unless-stopped
