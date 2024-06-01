@@ -25,7 +25,7 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(config("DEBUG"))
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS")
+ALLOWED_HOSTS = [config('ALLOWED_HOSTS')]
 
 
 # Application definition
@@ -113,35 +113,72 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 # AWS S3
 if not DEBUG:
-    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400'
-    }
-    AWS_LOCATION = 'static'
-    AWS_QUERYSTRING_AUTH = False
-    AWS_HEADERS = {
-        'Access-Control-Allow-Origin': '*',
-    }
-    # s3 static settings
-    AWS_STATIC_LOCATION = 'portfolio/django-numeric-calculator/static'
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/'
-    STATICFILES_STORAGE = 'django_calculator.storage_backends.StaticStorage'
-    # s3 public media settings
-    AWS_PUBLIC_MEDIA_LOCATION = 'portfolio/django-numeric-calculator/media'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_PUBLIC_MEDIA_LOCATION}/'
-    DEFAULT_FILE_STORAGE = 'django_calculator.storage_backends.PublicMediaStorage'
-    # s3 private media settings
-    PRIVATE_MEDIA_LOCATION = 'portfolio/django-numeric-calculator/private'
-    PRIVATE_FILE_STORAGE = 'django_calculator.storage_backends.PrivateMediaStorage'
+    BUCKET_TYPE = config('BUCKET_TYPE')
+
+    if BUCKET_TYPE == 'AWS':
+
+        AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+        AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+        AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+        AWS_DEFAULT_ACL = 'public-read'
+        AWS_S3_OBJECT_PARAMETERS = {
+            'CacheControl': 'max-age=86400'
+        }
+        AWS_LOCATION = 'static'
+        AWS_QUERYSTRING_AUTH = False
+        AWS_HEADERS = {
+            'Access-Control-Allow-Origin': '*',
+        }
+        # s3 static settings
+        AWS_STATIC_LOCATION = 'portfolio/numerical/static'
+        STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/'
+        STATICFILES_STORAGE = 'django_calculator.storage_backends.StaticStorage'
+        # s3 public media settings
+        AWS_PUBLIC_MEDIA_LOCATION = 'portfolio/numerical/media'
+        MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_PUBLIC_MEDIA_LOCATION}/'
+        DEFAULT_FILE_STORAGE = 'django_calculator.storage_backends.PublicMediaStorage'
+        # s3 private media settings
+        PRIVATE_MEDIA_LOCATION = 'portfolio/numerical/private'
+        PRIVATE_FILE_STORAGE = 'django_calculator.storage_backends.PrivateMediaStorage'
+
+    elif BUCKET_TYPE == 'BLACKBLAZE':
+
+        AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+        AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+        AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME')
+
+        AWS_S3_ENDPOINT = f's3.{AWS_S3_REGION_NAME}.backblazeb2.com'
+        AWS_S3_ENDPOINT_URL = f'https://{AWS_S3_ENDPOINT}'
+        
+        AWS_DEFAULT_ACL = 'public-read'
+        AWS_S3_OBJECT_PARAMETERS = {
+            'CacheControl': 'max-age=86400',
+        }
+
+        AWS_LOCATION = 'static'
+        AWS_QUERYSTRING_AUTH = False
+        AWS_HEADERS = {
+            'Access-Control-Allow-Origin': '*',
+        }
+        # s3 static settings
+        AWS_STATIC_LOCATION = 'portfolio/numerical/static'
+        STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_STATIC_LOCATION}/'
+        STATICFILES_STORAGE = 'django_calculator.storage_backends.StaticStorage'
+        # s3 public media settings
+        AWS_PUBLIC_MEDIA_LOCATION = 'portfolio/numerical/media'
+        MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_PUBLIC_MEDIA_LOCATION}/'
+        DEFAULT_FILE_STORAGE = 'django_calculator.storage_backends.PublicMediaStorage'
+        # s3 private media settings
+        PRIVATE_MEDIA_LOCATION = 'portfolio/numerical/private'
+        PRIVATE_FILE_STORAGE = 'django_calculator.storage_backends.PrivateMediaStorage'
+
+
 else:
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -158,3 +195,15 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"), ]
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# REFERRER POLICY
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+# Caching
+
+CACHES = {
+    "default": {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        "LOCATION": config('REDISCLOUD_URL'),
+    }
+}
