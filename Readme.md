@@ -36,22 +36,6 @@ Available at: https://numerical.arpansahu.me/
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
-
-## Installation
-
-Installing Pre requisites
-
-```bash
-  pip install -r requirements.txt
-
-```
-
-Run Server
-```bash
-  python manage.py runserver
-
-```
-
 ## Integrating AWS S3 Bucket 
 
 Install two python packages
@@ -164,6 +148,34 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"), ]
 ```
 
 run below command ```python manage.py collectstatic```  and you are good to go
+
+
+## Installation
+
+Installing Pre requisites
+
+```bash
+  pip install -r requirements.txt
+
+```
+
+Run Server
+```bash
+  python manage.py runserver
+
+```
+
+Making Migrations and Migrating them.
+```bash
+  python manage.py makemigrations
+  python manage.py migrate
+```
+
+Creating Super User
+```bash
+  python manage.py createsuperuser
+```
+
 
 ## Deployment on Heroku
 
