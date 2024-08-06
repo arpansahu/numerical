@@ -185,26 +185,6 @@ pipeline {
                 }
             }
         }
-        stage('MergeIntoBuild') {
-            when {
-                expression {
-                    // Check if the last commit includes only HTML files
-                    def changes = sh(script: 'git diff-tree --no-commit-id --name-only -r HEAD', returnStdout: true).trim().split("\n")
-                    return changes.every { it.endsWith('.html') }
-                }
-            }
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'a8543f6d-1f32-4a4c-bb31-d7fffe78828e', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                        sh 'chmod +x merge_main_into_build_branch.sh'
-                        sh """
-                        echo "Running merge_main_into_build_branch.sh "
-                        ./merge_main_into_build_branch.sh
-                        """
-                    }
-                }
-            }
-        }
     }
     post {
         success {
@@ -236,7 +216,7 @@ pipeline {
                         ]
                     }'"""
                 }
-                // Trigger the common_readme job on success if the commit message is not "Automatic Update readme.html for all repositories"
+                // Trigger the common_readme job on success when not Automatic Update
                 def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
                 if (!commitMessage.contains("Automatic Update")) {
                     def expandedProjectUrl = "https://github.com/arpansahu/${ENV_PROJECT_NAME}"
