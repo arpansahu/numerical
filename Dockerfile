@@ -10,5 +10,4 @@ RUN pip3 install -r requirements.txt
 
 EXPOSE 8003
 
-CMD python manage.py collectstatic
-CMD gunicorn --bind 0.0.0.0:8003 django_calculator.wsgi
+CMD bash -c "python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8003 numerical.wsgi"

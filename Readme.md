@@ -126,14 +126,14 @@ if not DEBUG:
         # s3 static settings
         AWS_STATIC_LOCATION = 'portfolio/numerical/static'
         STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/'
-        STATICFILES_STORAGE = 'django_calculator.storage_backends.StaticStorage'
+        STATICFILES_STORAGE = 'numerical.storage_backends.StaticStorage'
         # s3 public media settings
         AWS_PUBLIC_MEDIA_LOCATION = 'portfolio/numerical/media'
         MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_PUBLIC_MEDIA_LOCATION}/'
-        DEFAULT_FILE_STORAGE = 'django_calculator.storage_backends.PublicMediaStorage'
+        DEFAULT_FILE_STORAGE = 'numerical.storage_backends.PublicMediaStorage'
         # s3 private media settings
         PRIVATE_MEDIA_LOCATION = 'portfolio/numerical/private'
-        PRIVATE_FILE_STORAGE = 'django_calculator.storage_backends.PrivateMediaStorage'
+        PRIVATE_FILE_STORAGE = 'numerical.storage_backends.PrivateMediaStorage'
 
     elif BUCKET_TYPE == 'BLACKBLAZE':
 
@@ -158,14 +158,14 @@ if not DEBUG:
         # s3 static settings
         AWS_STATIC_LOCATION = 'portfolio/numerical/static'
         STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_STATIC_LOCATION}/'
-        STATICFILES_STORAGE = 'django_calculator.storage_backends.StaticStorage'
+        STATICFILES_STORAGE = 'numerical.storage_backends.StaticStorage'
         # s3 public media settings
         AWS_PUBLIC_MEDIA_LOCATION = 'portfolio/numerical/media'
         MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_PUBLIC_MEDIA_LOCATION}/'
-        DEFAULT_FILE_STORAGE = 'django_calculator.storage_backends.PublicMediaStorage'
+        DEFAULT_FILE_STORAGE = 'numerical.storage_backends.PublicMediaStorage'
         # s3 private media settings
         PRIVATE_MEDIA_LOCATION = 'portfolio/numerical/private'
-        PRIVATE_FILE_STORAGE = 'django_calculator.storage_backends.PrivateMediaStorage'
+        PRIVATE_FILE_STORAGE = 'numerical.storage_backends.PrivateMediaStorage'
 
 
 else:
@@ -260,7 +260,7 @@ MIDDLEWARE = [
 
 Create Procfile and include this code snippet in it.
 ```
-web: gunicorn django_calculator.wsgi
+web: gunicorn numerical.wsgi
 ```
 
 # Also Set Referrer-policy Header
@@ -380,7 +380,7 @@ RUN pip3 install -r requirements.txt
 EXPOSE 8003
 
 CMD python manage.py collectstatic
-CMD gunicorn --bind 0.0.0.0:8003 django_calculator.wsgi
+CMD gunicorn --bind 0.0.0.0:8003 numerical.wsgi
 ```
 
 Create a file named docker-compose.yml and add following lines in it
@@ -392,11 +392,11 @@ services:
   web:
     build: .
     env_file: ./.env
-    command: bash -c "gunicorn --bind 0.0.0.0:8003 django_calculator.wsgi"
-    image: django_calculator
-    container_name: django_calculator
+    command: bash -c "gunicorn --bind 0.0.0.0:8003 numerical.wsgi"
+    image: numerical
+    container_name: numerical
     volumes:
-      - .:/django_calculator
+      - .:/numerical
     ports:
       - "8003:8003"
     restart: unless-stopped
@@ -466,7 +466,7 @@ server {
   server_name               arpansahu.me;        
   listen                    80;
   location / {
-    proxy_pass              http://{ip_of_home_server/localhost}:8000;
+    proxy_pass              http://{ip_of_home_server/localhost}:8003;
     proxy_set_header        Host $host;
   }
 }
@@ -563,7 +563,7 @@ Now It's time to enable HTTPS for this server
     server {
     
       location / {
-        proxy_pass              http://{ip_of_home_server/ localhost}:8000;
+        proxy_pass              http://{ip_of_home_server/ localhost}:8003;
         proxy_set_header        Host $host;
         
         listen 443 ssl; # managed by Certbot
@@ -912,7 +912,7 @@ server {
         }
 
     location / {
-         proxy_pass              http://0.0.0.0:8000;
+         proxy_pass              http://0.0.0.0:8003;
          proxy_set_header        Host $host;
          proxy_set_header    X-Forwarded-Proto $scheme;
     }

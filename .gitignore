@@ -1,4 +1,4 @@
-/venv/
+
 
 # Default ignored files
 /shelf/
@@ -58,3 +58,5 @@ tmtagsHistory
 socialauth
 
 **/migrations/**
+
+venv
