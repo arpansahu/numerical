@@ -4,7 +4,7 @@ services:
   web:
     build: .
     env_file: ./.env
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && --bind 0.0.0.0:8003 numerical.wsgi"
+    command: bash -c "python manage.py --bind 0.0.0.0:8003 numerical.wsgi"
     image: numerical
     container_name: numerical
     volumes:
