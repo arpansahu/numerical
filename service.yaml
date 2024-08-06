@@ -7,7 +7,7 @@ spec:
     app: numerical
   ports:
     - protocol: TCP
-      port: 8000
-      targetPort: 8000
-      nodePort: 32000
+      port: 8003
+      targetPort: 8003
+      nodePort: 32003
   type: NodePort
