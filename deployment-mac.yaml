@@ -18,8 +18,7 @@ spec:
         - name: harbor-registry-secret
       containers:
         - image: harbor.arpansahu.me/library/numerical_mac:latest
-          imagePullPolicy: Always
-          name: numerical_mac
+          name: numerical-mac
           env:
             - name: SECRET_KEY
               valueFrom:
