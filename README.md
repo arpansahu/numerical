@@ -2670,7 +2670,7 @@ pipeline {
                             """
                             
                             // Wait for a few seconds to let the app start
-                            sleep 20
+                            sleep 60
 
                             // Check deployment status
                             sh """
