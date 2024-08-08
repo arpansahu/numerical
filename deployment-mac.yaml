@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: numerical-app-mac
+  name: numerical-mac-app
   labels:
-    app: numerical
+    app: numerical-mac
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: numerical
+      app: numerical-mac
   template:
     metadata:
       labels:
-        app: numerical
+        app: numerical-mac
     spec:
       imagePullSecrets:
         - name: harbor-registry-secret
       containers:
         - image: harbor.arpansahu.me/library/numerical_mac:latest
           imagePullPolicy: Always
-          name: numerical
+          name: numerical_mac
           env:
             - name: SECRET_KEY
               valueFrom:
