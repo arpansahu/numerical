@@ -69,6 +69,7 @@ The most common Redis use cases are session cache, full-page cache, queues, lead
 [![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org/en/)
 ![Minio](https://img.shields.io/badge/MINIO-TEXT?style=for-the-badge&logo=minio&logoColor=white&color=%23C72E49)(https://min.io/)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
+[![Mail Jet](https://img.shields.io/badge/MAILJET-TEXT?style=for-the-badge&logo=minutemailer&logoColor=white)](https://mailjet.com/)
 
 ## Demo
 
@@ -4183,6 +4184,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 [![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org/en/)
 ![Minio](https://img.shields.io/badge/MINIO-TEXT?style=for-the-badge&logo=minio&logoColor=white&color=%23C72E49)(https://min.io/)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
+[![Mail Jet](https://img.shields.io/badge/MAILJET-TEXT?style=for-the-badge&logo=minutemailer&logoColor=white)](https://mailjet.com/)
 
 ## Environment Variables
 
