@@ -4212,7 +4212,7 @@ BUCKET_TYPE=
 
 REDISCLOUD_URL=
 
-# deploy_kube.sh requiurements
+# deploy_kube.sh requirements
 HARBOR_USERNAME=
 
 HARBOR_PASSWORD=
