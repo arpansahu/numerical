@@ -21,7 +21,8 @@ spec:
           name: numerical-mac
           envFrom:
             - secretRef:
-                name: arpansahu-dot-me-secret
+                name: numerical-secret
           ports:
             - containerPort: 8003
               name: gunicorn
+  revisionHistoryLimit: 0
