@@ -34,10 +34,14 @@ AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
 BUCKET_TYPE = config('BUCKET_TYPE')
 
+DATABASE_URL = config("DATABASE_URL")
 REDIS_CLOUD_URL = config('REDIS_CLOUD_URL')
 
 MAIL_JET_API_KEY = config('MAIL_JET_API_KEY')
 MAIL_JET_API_SECRET = config('MAIL_JET_API_SECRET')
+
+DOMAIN = config('DOMAIN')
+PROTOCOL = config('PROTOCOL')
 
 SENTRY_ENVIRONMENT = config('SENTRY_ENVIRONMENT')  # production Or "staging", "development", etc.
 SENTRY_DSH_URL = config('SENTRY_DSH_URL')
@@ -56,6 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'check_service_health',
+    'account'
 ]
 
 MIDDLEWARE = [
@@ -94,13 +99,18 @@ WSGI_APPLICATION = 'numerical.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
+import dj_database_url
+
+# DATABASES['default'] =  dj_database_url.config()
+# updated
+DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -314,3 +324,5 @@ LOGGING = {
         },
     },
 }
+
+# CSRF_TRUSTED_ORIGINS = ['https://numerical.arpansahu.me', ]
