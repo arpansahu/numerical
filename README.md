@@ -1570,10 +1570,11 @@ spec:
           name: numerical
           envFrom:
             - secretRef:
-                name: arpansahu-dot-me-secret
+                name: numerical-secret
           ports:
             - containerPort: 8003
               name: gunicorn
+  revisionHistoryLimit: 0
 ```
 
 3. Create a service.yaml file and fill it with the below contents.
@@ -2604,10 +2605,10 @@ pipeline {
         DOCKER_PORT = "8003"
         PROJECT_NAME_WITH_DASH = "numerical"
         SERVER_NAME= "numerical.arpansahu.me"
-        BUILD_PROJECT_NAME = "arpansahu_dot_me_build"
+        BUILD_PROJECT_NAME = "numerical_build"
         JENKINS_DOMAIN = "jenkins.arpansahu.me"
         SENTRY_ORG="arpansahu"
-        SENTRY_PROJECT="arpansahu_dot_me"
+        SENTRY_PROJECT="numerical"
     }
     stages {
         stage('Initialize') {
@@ -2734,7 +2735,7 @@ pipeline {
                             echo "Container ${ENV_PROJECT_NAME} is running"
                             sh """
                                 # Fetch HTTP status code
-                                HTTP_STATUS=\$(curl -s -o /dev/null -w "%{http_code}" http://0.0.0.0:${DOCKER_PORT})
+                                HTTP_STATUS=\$(curl -s -o /dev/null -w "%{http_code}" -L http://0.0.0.0:${DOCKER_PORT})
                                 echo "HTTP Status: \$HTTP_STATUS"
                                 
                                 # Update Nginx configuration if status code is 200 (OK)
@@ -4328,7 +4329,13 @@ AWS_STORAGE_BUCKET_NAME=
 
 BUCKET_TYPE=
 
+DATABASE_URL= 
+
 REDIS_CLOUD_URL=
+
+DOMAIN=
+
+PROTOCOL=
 
 # SENTRY
 SENTRY_ENVIRONMENT=
