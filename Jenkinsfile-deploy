@@ -127,14 +127,14 @@ pipeline {
             steps {
                 script {
                     if (params.DEPLOY_TYPE == 'docker') {
-                        
+
                         // Copy the .env file to the workspace
                         sh "sudo cp /root/projectenvs/${ENV_PROJECT_NAME}/.env ${env.WORKSPACE}/"
-                        
+
                         sh 'docker-compose down'
                         sh 'docker-compose pull'
                         sh 'docker-compose up -d'
-                        
+
                         sleep 60
 
                         def containerRunning = sh(script: "docker ps -q -f name=${ENV_PROJECT_NAME}", returnStdout: true).trim()
@@ -186,11 +186,11 @@ pipeline {
                             """
 
                             // Delete the existing service and deployment
-                            sh """
-                            kubectl delete service ${PROJECT_NAME_WITH_DASH}-service || true
-                            kubectl scale deployment ${PROJECT_NAME_WITH_DASH}-app --replicas=0 || true
-                            kubectl delete deployment ${PROJECT_NAME_WITH_DASH}-app || true
-                            """
+                            // sh """
+                            // kubectl delete service ${PROJECT_NAME_WITH_DASH}-service || true
+                            // kubectl scale deployment ${PROJECT_NAME_WITH_DASH}-app --replicas=0 || true
+                            // kubectl delete deployment ${PROJECT_NAME_WITH_DASH}-app || true
+                            // """
 
                             // Deploy to Kubernetes
                             sh """
@@ -266,6 +266,29 @@ pipeline {
                         }
                     }
                     currentBuild.description = 'DEPLOYMENT_EXECUTED'
+                }
+            }
+        }
+        stage('Sentry release') {
+            when {
+                expression { params.DEPLOY }
+            }
+            steps {
+                script {
+                    echo "Sentry Release ..."
+
+                    sh """
+                        # Get the current git commit hash
+                        VERSION=\$(git rev-parse HEAD)
+
+                        sentry-cli releases -o ${SENTRY_ORG} -p ${SENTRY_PROJECT} new \$VERSION
+
+                        # Associate commits with the release
+                        sentry-cli releases -o ${SENTRY_ORG} -p ${SENTRY_PROJECT} set-commits --auto \$VERSION
+
+                        # Deploy the release (optional step for marking the release as deployed)
+                        sentry-cli releases -o ${SENTRY_ORG} -p ${SENTRY_PROJECT} deploys \$VERSION new -e production
+                    """
                 }
             }
         }
