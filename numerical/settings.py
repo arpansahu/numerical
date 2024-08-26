@@ -232,24 +232,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 #Caching
-if not DEBUG:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': REDIS_CLOUD_URL,
-            'OPTIONS': {
-                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            },
-            'KEY_PREFIX': PROJECT_NAME
-        }
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_CLOUD_URL,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+        'KEY_PREFIX': PROJECT_NAME
     }
-else:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
-        }
-    }
+}
 
 # Get the current git commit hash
 def get_git_commit_hash():
@@ -264,19 +256,19 @@ sentry_sdk.init(
             DjangoIntegration(
                 transaction_style='url',
                 middleware_spans=True,
-                signals_spans=True,
-                signals_denylist=[
-                    django.db.models.signals.pre_init,
-                    django.db.models.signals.post_init,
-                ],
-                cache_spans=False,
+                # signals_spans=True,
+                # signals_denylist=[
+                #     django.db.models.signals.pre_init,
+                #     django.db.models.signals.post_init,
+                # ],
+                # cache_spans=False,
             ),
         ],
     traces_sample_rate=1.0,  # Adjust this according to your needs
     send_default_pii=True,  # To capture personal identifiable information (optional)
     release=get_git_commit_hash(),  # Set the release to the current git commit hash
     environment=SENTRY_ENVIRONMENT,  # Or "staging", "development", etc.
-    profiles_sample_rate=1.0,
+    # profiles_sample_rate=1.0,
 )
 
 LOGGING = {
