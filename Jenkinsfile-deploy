@@ -147,7 +147,7 @@ pipeline {
                     sh "~/.docker/cli-plugins/docker-compose up -d"
 
                     // Trigger the new job for Docker deployment on AWS and wait for completion
-                    def dockerDeployJob = build job: 'aws_docker_deploy_job', // Name of the job handling Docker deployment on AWS
+                    def dockerDeployJob = build job: 'aws_docker_deploy_job_numerical', // Name of the job handling Docker deployment on AWS
                         parameters: [
                             string(name: 'NGINX_CONF', value: NGINX_CONF_PATH),
                             string(name: 'SERVER_NAME', value: SERVER_NAME_VAR),
