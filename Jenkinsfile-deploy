@@ -150,6 +150,8 @@ pipeline {
 
                     echo "AWS Docker deployment completed."
 
+                    sleep 60
+                    
                     // Check if the service is running on the AWS node by fetching HTTP status
                     def httpStatus = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://${AWS_IP}:${DOCKER_PORT}", returnStdout: true).trim()
                     echo "HTTP Status: ${httpStatus}"
@@ -419,16 +421,16 @@ pipeline {
                     }'"""
                 }
                 // Trigger the common_readme job on success when not Automatic Update
-                def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
-                if (!commitMessage.contains("Automatic Update")) {
-                    def expandedProjectUrl = "https://github.com/arpansahu/${ENV_PROJECT_NAME}"
-                    build job: 'common_readme', parameters: [
-                        string(name: 'project_git_url', value: expandedProjectUrl),
-                        string(name: 'environment', value: 'prod')
-                    ], wait: false
-                } else {
-                    echo "Skipping common_readme job trigger due to commit message: ${commitMessage}"
-                }
+                // def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                // if (!commitMessage.contains("Automatic Update")) {
+                //     def expandedProjectUrl = "https://github.com/arpansahu/${ENV_PROJECT_NAME}"
+                //     build job: 'common_readme', parameters: [
+                //         string(name: 'project_git_url', value: expandedProjectUrl),
+                //         string(name: 'environment', value: 'prod')
+                //     ], wait: false
+                // } else {
+                //     echo "Skipping common_readme job trigger due to commit message: ${commitMessage}"
+                // }
             }
         }
         failure {
