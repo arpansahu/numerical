@@ -21,7 +21,7 @@ pipeline {
         SENTRY_PROJECT="numerical"
         LOCAL_ENV_PATH = "/root/projectenvs/${ENV_PROJECT_NAME}/.env"
         AWS_USER = "ubuntu"
-        AWS_HOST = ${env.AWS_HOST}
+        AWS_HOST = "${env.AWS_HOST}"
         SSH_CREDENTIALS_ID = "aws_ssh_key"  // Replace with your Jenkins SSH credentials ID
     }
     stages {
