@@ -1,8 +1,8 @@
 pipeline {
-    agent { label 'local' }
+    agent { label 'aws' }
     parameters {
         booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Skip the Check for Changes stage')
-        choice(name: 'DEPLOY_TYPE', choices: ['kubernetes', 'docker'], description: 'Select deployment type')
+        choice(name: 'DEPLOY_TYPE', choices: ['docker', 'kubernetes',], description: 'Select deployment type')
     }
     environment {
         REGISTRY = "harbor.arpansahu.me"
