@@ -72,27 +72,27 @@ pipeline {
                 script {
                     echo "Scaling down Kubernetes deployment if it exists..."
                     sh """
-                        replicas=\$(kubectl get deployment ${PROJECT_NAME_WITH_DASH}-app -o=jsonpath='{.spec.replicas}') || true
+                        replicas=\$(kubectl get deployment ${params.PROJECT_NAME_WITH_DASH}-app -o=jsonpath='{.spec.replicas}') || true
                         if [ "\$replicas" != "" ] && [ \$replicas -gt 0 ]; then
-                            kubectl scale deployment ${PROJECT_NAME_WITH_DASH}-app --replicas=0
+                            kubectl scale deployment ${params.PROJECT_NAME_WITH_DASH}-app --replicas=0
                             echo 'Kubernetes deployment scaled down successfully.'
                         else
                             echo 'No running Kubernetes deployment to scale down.'
                         fi
                     """
 
-                    echo "Checking for running local Docker container for project ${ENV_PROJECT_NAME}..."
+                    echo "Checking for running local Docker container for project ${params.ENV_PROJECT_NAME}..."
                     sh """
-                        DOCKER_CONTAINER=\$(docker ps -q -f name=${ENV_PROJECT_NAME})
+                        DOCKER_CONTAINER=\$(docker ps -q -f name=${params.ENV_PROJECT_NAME})
                         if [ "\$DOCKER_CONTAINER" ]; then
-                            echo "Docker container ${ENV_PROJECT_NAME} is running. Stopping and removing it..."
-                            docker rm -f ${ENV_PROJECT_NAME}
+                            echo "Docker container ${params.ENV_PROJECT_NAME} is running. Stopping and removing it..."
+                            docker rm -f ${params.ENV_PROJECT_NAME}
                             if [ \$? -ne 0 ]; then
-                                echo "Failed to remove Docker container ${ENV_PROJECT_NAME}"
+                                echo "Failed to remove Docker container ${params.ENV_PROJECT_NAME}"
                                 exit 1
                             fi
                         else
-                            echo "Docker container ${ENV_PROJECT_NAME} is not running. Skipping removal."
+                            echo "Docker container ${params.ENV_PROJECT_NAME} is not running. Skipping removal."
                         fi
                     """
                 }
