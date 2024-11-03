@@ -25,20 +25,39 @@
   <script src="https://js.sentry-cdn.com/0ee9da1087817ad2c7d9e2448e4b05c6.min.js" crossorigin="anonymous"></script>
   
   <!-- Specific CSS goes HERE -->
-  {% block stylesheets %}{% endblock stylesheets %}
+  {% block stylesheets %}
+  <style>
+    html {
+      {#font-size: 14px;#}
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* Full viewport height */
+    }
+    .main-content {
+        flex-grow: 1; /* Expands to take available space, pushing footer down */
+    } 
+    footer {
+        /* Optional: add styling if needed */
+    }
+  </style>
+  {% endblock stylesheets %}
 
 </head>
-<body class="g-sidenav-show  bg-gray-100">
-
-  <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg "style="margin: 20px">
-
-
-    {% block content %}{% endblock content %}
-
+<body class="d-flex flex-column min-vh-100 g-sidenav-show bg-gray-100">
+  <!-- Main content with flex-grow to take available space -->
+  <main class="main-content flex-grow-1 position-relative max-height-vh-100 h-100 border-radius-lg">
+      {% include 'snippets/header.html' %}
+      {% block content %}{% endblock %}
   </main>
 
-  {% include "snippets/scripts.html" %}
+  <!-- Footer at the bottom -->
+  <footer class="container-fluid py-4">
+      {% include 'snippets/footer.html' %}
+  </footer>
 
+  {% include "snippets/scripts.html" %}
   <!-- Specific JS goes HERE -->
   <script src="{% static 'js/jquery.js' %}"></script>
   {% block javascripts %}{% endblock javascripts %}
