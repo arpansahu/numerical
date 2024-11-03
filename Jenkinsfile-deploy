@@ -1,4 +1,5 @@
 pipeline {
+    agent any
     parameters {
         choice(name: 'NODE_LOCATION', choices: [ 'aws', 'local'], description: 'Choose where to deploy')
         booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Skip the Check for Changes stage')
