@@ -147,23 +147,41 @@ pipeline {
                     sh "~/.docker/cli-plugins/docker-compose up -d"
 
                     // Trigger the new job for Docker deployment on AWS and wait for completion
-                    def dockerDeployJob = build job: 'aws_docker_deploy_job_numerical', // Name of the job handling Docker deployment on AWS
-                        parameters: [
-                            string(name: 'NGINX_CONF', value: NGINX_CONF_PATH),
-                            string(name: 'SERVER_NAME', value: SERVER_NAME_VAR),
-                            string(name: 'DOCKER_PORT', value: DOCKER_PORT_VAR),
-                            string(name: 'AWS_PUBLIC_IP', value: AWS_PUBLIC_IP_VAR)
-                        ],
-                        propagate: false, // Allows capturing the job result without immediate failure
-                        wait: true
+                    try {
+                        echo "Triggering 'aws_docker_deploy_job_numerical' with parameters:"
+                        echo "NGINX_CONF: ${NGINX_CONF_PATH}"
+                        echo "SERVER_NAME: ${SERVER_NAME_VAR}"
+                        echo "DOCKER_PORT: ${DOCKER_PORT_VAR}"
+                        echo "AWS_PUBLIC_IP: ${AWS_PUBLIC_IP_VAR}"
 
-                    // Check the result of the job
-                    if (dockerDeployJob.result == 'SUCCESS') {
-                        echo "AWS Docker deployment job completed successfully."
-                    } else {
-                        echo "AWS Docker deployment job failed with status: ${dockerDeployJob.result}"
+                        def dockerDeployJob = build(
+                            job: 'aws_docker_deploy_job_numerical', // Ensure this is the exact job name
+                            parameters: [
+                                string(name: 'NGINX_CONF', value: NGINX_CONF_PATH),
+                                string(name: 'SERVER_NAME', value: SERVER_NAME_VAR),
+                                string(name: 'DOCKER_PORT', value: DOCKER_PORT_VAR),
+                                string(name: 'AWS_PUBLIC_IP', value: AWS_PUBLIC_IP_VAR)
+                            ],
+                            propagate: false, // Capture the result without failing the main pipeline immediately
+                            wait: true
+                        )
+
+                        // Log the result of the job
+                        echo "Triggered job 'aws_docker_deploy_job_numerical' completed with result: ${dockerDeployJob.result}"
+
+                        if (dockerDeployJob.result == 'SUCCESS') {
+                            echo "AWS Docker deployment job completed successfully."
+                        } else {
+                            echo "AWS Docker deployment job failed with status: ${dockerDeployJob.result}"
+                            currentBuild.result = 'FAILURE'
+                            error("Stopping main pipeline due to failure in AWS Docker deployment job.")
+                        }
+                    } catch (Exception e) {
+                        echo "An error occurred while trying to trigger 'aws_docker_deploy_job_numerical'."
+                        echo "Exception message: ${e.getMessage()}"
+                        e.printStackTrace()  // Prints the full stack trace for more insight
                         currentBuild.result = 'FAILURE'
-                        error("Stopping main pipeline due to failure in AWS Docker deployment job.")
+                        error("Stopping main pipeline due to an error when calling AWS Docker deployment job.")
                     }
                 }
             }
