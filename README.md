@@ -2385,7 +2385,7 @@ pipeline {
 
 ```bash
 pipeline {
-    agent { label 'aws' }
+    agent any
     parameters {
         choice(name: 'NODE_LOCATION', choices: [ 'aws', 'local'], description: 'Choose where to deploy')
         booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Skip the Check for Changes stage')
@@ -2516,6 +2516,7 @@ pipeline {
             when {
                 expression { params.NODE_LOCATION == 'aws' && params.DEPLOY }
             }
+            agent { label 'aws' }  // Dynamically use AWS agent if NODE_LOCATION is 'aws'
             steps {
                 script {
                     echo "Starting AWS Docker Deployment..."
