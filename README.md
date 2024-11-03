@@ -2407,7 +2407,7 @@ pipeline {
         SENTRY_PROJECT="numerical"
         LOCAL_ENV_PATH = "/root/projectenvs/${ENV_PROJECT_NAME}/.env"
         AWS_USER = "ubuntu"
-        AWS_HOST = "ec2-13-60-191-81.eu-north-1.compute.amazonaws.com"
+        AWS_HOST = "${env.AWS_HOST}"
         SSH_CREDENTIALS_ID = "aws_ssh_key"  // Replace with your Jenkins SSH credentials ID
     }
     stages {
@@ -2532,6 +2532,25 @@ pipeline {
                     sh "~/.docker/cli-plugins/docker-compose pull"
                     sh "~/.docker/cli-plugins/docker-compose up -d"
 
+                    // Trigger the new job for Docker deployment on AWS and wait for completion
+                    def dockerDeployJob = build job: 'aws_docker_deploy_job', // Name of the job handling Docker deployment on AWS
+                        parameters: [
+                            string(name: 'NGINX_CONF', value: NGINX_CONF_PATH),
+                            string(name: 'SERVER_NAME', value: SERVER_NAME_VAR),
+                            string(name: 'DOCKER_PORT', value: DOCKER_PORT_VAR),
+                            string(name: 'AWS_PUBLIC_IP', value: AWS_PUBLIC_IP_VAR)
+                        ],
+                        propagate: false, // Allows capturing the job result without immediate failure
+                        wait: true
+
+                    // Check the result of the job
+                    if (dockerDeployJob.result == 'SUCCESS') {
+                        echo "AWS Docker deployment job completed successfully."
+                    } else {
+                        echo "AWS Docker deployment job failed with status: ${dockerDeployJob.result}"
+                        currentBuild.result = 'FAILURE'
+                        error("Stopping main pipeline due to failure in AWS Docker deployment job.")
+                    }
                 }
             }
         }
