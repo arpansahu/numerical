@@ -34,33 +34,31 @@ pipeline {
             }
         }
         
-        stage('Update Nginx for AWS') {
+        stage('Update Nginx for AWS Service') {
             steps {
                 script {
-                    echo "Calling update_nginx_for_aws_numerical job..."
+                    echo "Checking AWS service status..."
 
-                    // Trigger the job and capture the result
-                    def nginxUpdateJob = build job: 'update_nginx_for_aws_numerical', 
-                        parameters: [
-                            string(name: 'NGINX_CONF', value: NGINX_CONF_PATH),
-                            string(name: 'SERVER_NAME', value: SERVER_NAME_VAR),
-                            string(name: 'DOCKER_PORT', value: DOCKER_PORT_VAR),
-                            string(name: 'AWS_PUBLIC_IP', value: AWS_PUBLIC_IP_VAR)
-                        ],
-                        propagate: false, // Allows capturing the job result without failing immediately
-                        wait: true
-                    
-                    // Check job result and handle accordingly
-                    if (nginxUpdateJob.result == 'SUCCESS') {
-                        echo "Nginx update job completed successfully."
+                    // Check if the service is running on the AWS node by fetching HTTP status
+                    def httpStatus = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://${params.AWS_PUBLIC_IP}:${params.DOCKER_PORT}", returnStdout: true).trim()
+                    echo "HTTP Status: ${httpStatus}"
+
+                    if (httpStatus == '200') {
+                        echo "Service on AWS is available. Updating Nginx configuration on local node..."
+
+                        // Update the Nginx configuration to point to the AWS IP and reload Nginx
+                        sh """
+                            sudo sed -i 's|proxy_pass .*;|proxy_pass http://${params.AWS_PUBLIC_IP}:${params.DOCKER_PORT};|' ${params.NGINX_CONF}
+                            sudo nginx -s reload
+                        """
+                        echo 'Nginx configuration updated and reloaded successfully.'
                     } else {
-                        echo "Nginx update job failed with status: ${nginxUpdateJob.result}"
-                        currentBuild.result = 'FAILURE'
-                        error("Stopping main pipeline due to failure in Nginx update job.")
+                        echo "Service on AWS is not available. Nginx configuration not updated."
                     }
                 }
             }
         }
+        
     }
     post {
         success {
