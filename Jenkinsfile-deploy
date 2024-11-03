@@ -156,7 +156,7 @@ pipeline {
                     try {
                         // Run curl with a timeout to prevent hanging
                         def httpStatus = sh(
-                            script: "curl -s -o /dev/null -w '%{http_code}' --max-time 10 http://${AWS_PUBLIC_IP}:${DOCKER_PORT}",
+                            script: "curl -s -o /dev/null -w '%{http_code}' --max-time 10 http://${AWS_IP}:${DOCKER_PORT}",
                             returnStdout: true
                         ).trim()
                         
@@ -165,7 +165,7 @@ pipeline {
                         if (httpStatus == '200') {
                             echo "Service on AWS is available. Updating Nginx configuration on local node..."
                             sh """
-                                sudo sed -i 's|proxy_pass .*;|proxy_pass http://${AWS_PUBLIC_IP}:${DOCKER_PORT};|' ${NGINX_CONF}
+                                sudo sed -i 's|proxy_pass .*;|proxy_pass http://${AWS_IP}:${DOCKER_PORT};|' ${NGINX_CONF}
                                 sudo nginx -s reload
                             """
                             echo 'Nginx configuration updated and reloaded successfully.'
