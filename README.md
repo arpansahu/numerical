@@ -2385,8 +2385,9 @@ pipeline {
 
 ```bash
 pipeline {
-    agent { label 'local' }
+    agent { label 'aws' }
     parameters {
+        choice(name: 'NODE_LOCATION', choices: [ 'aws', 'local'], description: 'Choose where to deploy')
         booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Skip the Check for Changes stage')
         choice(name: 'DEPLOY_TYPE', choices: ['kubernetes', 'docker'], description: 'Select deployment type')
     }
@@ -2404,6 +2405,10 @@ pipeline {
         JENKINS_DOMAIN = "jenkins.arpansahu.me"
         SENTRY_ORG="arpansahu"
         SENTRY_PROJECT="numerical"
+        LOCAL_ENV_PATH = "/root/projectenvs/${ENV_PROJECT_NAME}/.env"
+        AWS_USER = "ubuntu"
+        AWS_HOST = "ec2-13-60-191-81.eu-north-1.compute.amazonaws.com"
+        SSH_CREDENTIALS_ID = "aws_ssh_key"  // Replace with your Jenkins SSH credentials ID
     }
     stages {
         stage('Initialize') {
@@ -2420,7 +2425,7 @@ pipeline {
         }
         stage('Setup Kubernetes Config') {
             when {
-                expression { return params.DEPLOY_TYPE == 'kubernetes' }
+                expression { return params.NODE_CHOICE == 'local' && params.DEPLOY_TYPE == 'kubernetes' }
             }
             steps {
                 script {
@@ -2432,6 +2437,9 @@ pipeline {
             }
         }
         stage('Check & Create Nginx Configuration') {
+            when {
+                expression { return params.NODE_CHOICE == 'local' && params.DEPLOY }
+            }
             steps {
                 script {
                     // Check if the Nginx configuration file exists
@@ -2453,7 +2461,7 @@ pipeline {
                         sh "sudo ln -sf ${NGINX_CONF} /etc/nginx/sites-enabled/"
                     } else {
                         echo "Nginx configuration file already exists."
-                    }                    
+                    }
                 }
             }
         }
@@ -2506,16 +2514,43 @@ pipeline {
                 }
             }
         }
+        stage('Aws Docker Deploy') {
+            when {
+                expression { params.NODE == 'aws' && params.DEPLOY }
+            }
+            steps {
+                script {
+                    echo "Starting AWS Docker Deployment..."
+                    
+                    // Check if .env file exists on AWS node
+                    // Use Jenkins SSH credentials to connect and copy .env to AWS workspace
+
+                    // Proceed with Docker deployment on AWS
+                    echo "Deploying Docker on AWS..."
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${AWS_SSH_USER}@${AWS_SSH_HOST} << EOF
+                        cd ${AWS_ENV_DIR}
+                        docker-compose down
+                        docker-compose pull
+                        docker-compose up -d
+                        EOF
+                    """
+                }
+            }
+        }
         stage('Deploy') {
             when {
-                expression { params.DEPLOY }
+                allOf {
+                    expression { params.DEPLOY }
+                    expression { params.NODE == 'local' }
+                }
             }
             steps {
                 script {
                     if (params.DEPLOY_TYPE == 'docker') {
 
                         // Copy the .env file to the workspace
-                        sh "sudo cp /root/projectenvs/${ENV_PROJECT_NAME}/.env ${env.WORKSPACE}/"
+                        sh "sudo cp ${LOCAL_ENV_PATH} ${env.WORKSPACE}/"
 
                         sh 'docker-compose down'
                         sh 'docker-compose pull'
