@@ -38,6 +38,11 @@ pipeline {
             steps {
                 script {
                     echo "Checking AWS service status..."
+                    
+                    // Validate parameters
+                    if (!params.AWS_PUBLIC_IP || !params.DOCKER_PORT) {
+                        error("AWS_PUBLIC_IP and DOCKER_PORT must be provided.")
+                    }
 
                     // Check if the service is running on the AWS node by fetching HTTP status
                     def httpStatus = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://${params.AWS_PUBLIC_IP}:${params.DOCKER_PORT}", returnStdout: true).trim()
@@ -54,11 +59,11 @@ pipeline {
                         echo 'Nginx configuration updated and reloaded successfully.'
                     } else {
                         echo "Service on AWS is not available. Nginx configuration not updated."
+                        error("AWS service unavailable, HTTP Status: ${httpStatus}")
                     }
                 }
             }
         }
-        
     }
     post {
         success {
