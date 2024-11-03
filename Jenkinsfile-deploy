@@ -148,9 +148,9 @@ pipeline {
                     try {
                         echo "Triggering 'aws_docker_deploy_job_numerical' with parameters:"
                         echo "NGINX_CONF: ${NGINX_CONF}"
-                        echo "SERVER_NAME: ${SERVER_NAME_VAR}"
-                        echo "DOCKER_PORT: ${DOCKER_PORT_VAR}"
-                        echo "AWS_PUBLIC_IP: ${AWS_PUBLIC_IP_VAR}"
+                        echo "SERVER_NAME: ${SERVER_NAME}"
+                        echo "DOCKER_PORT: ${DOCKER_PORT}"
+                        echo "AWS_PUBLIC_IP: ${AWS_IP}"
 
                         def dockerDeployJob = build(
                             job: 'aws_docker_deploy_job_numerical', // Ensure this is the exact job name
