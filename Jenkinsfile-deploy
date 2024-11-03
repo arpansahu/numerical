@@ -20,9 +20,7 @@ pipeline {
         SENTRY_ORG="arpansahu"
         SENTRY_PROJECT="numerical"
         LOCAL_ENV_PATH = "/root/projectenvs/${ENV_PROJECT_NAME}/.env"
-        AWS_USER = "ubuntu"
-        AWS_HOST = "${env.AWS_HOST}"
-        SSH_CREDENTIALS_ID = "aws_ssh_key"  // Replace with your Jenkins SSH credentials ID
+        AWS_IP = "${env.AWS_IP}"
     }
     stages {
         stage('Initialize') {
@@ -149,7 +147,7 @@ pipeline {
                     // Trigger the new job for Docker deployment on AWS and wait for completion
                     try {
                         echo "Triggering 'aws_docker_deploy_job_numerical' with parameters:"
-                        echo "NGINX_CONF: ${NGINX_CONF_PATH}"
+                        echo "NGINX_CONF: ${NGINX_CONF}"
                         echo "SERVER_NAME: ${SERVER_NAME_VAR}"
                         echo "DOCKER_PORT: ${DOCKER_PORT_VAR}"
                         echo "AWS_PUBLIC_IP: ${AWS_PUBLIC_IP_VAR}"
@@ -157,10 +155,10 @@ pipeline {
                         def dockerDeployJob = build(
                             job: 'aws_docker_deploy_job_numerical', // Ensure this is the exact job name
                             parameters: [
-                                string(name: 'NGINX_CONF', value: NGINX_CONF_PATH),
-                                string(name: 'SERVER_NAME', value: SERVER_NAME_VAR),
-                                string(name: 'DOCKER_PORT', value: DOCKER_PORT_VAR),
-                                string(name: 'AWS_PUBLIC_IP', value: AWS_PUBLIC_IP_VAR)
+                                string(name: 'NGINX_CONF', value: NGINX_CONF),
+                                string(name: 'SERVER_NAME', value: SERVER_NAME),
+                                string(name: 'DOCKER_PORT', value: DOCKER_PORT),
+                                string(name: 'AWS_PUBLIC_IP', value: AWS_IP)
                             ],
                             propagate: false, // Capture the result without failing the main pipeline immediately
                             wait: true
