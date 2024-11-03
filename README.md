@@ -2516,7 +2516,7 @@ pipeline {
         }
         stage('Aws Docker Deploy') {
             when {
-                expression { params.NODE == 'aws' && params.DEPLOY }
+                expression { params.NODE_LOCATION == 'aws' && params.DEPLOY }
             }
             steps {
                 script {
