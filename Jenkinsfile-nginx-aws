@@ -1,0 +1,73 @@
+pipeline {
+    agent { label 'local' }  // Ensure this runs on the local node
+    parameters {
+        string(name: 'NGINX_CONF', description: 'Path to the Nginx configuration file')
+        string(name: 'SERVER_NAME', description: 'Server name for the Nginx configuration')
+        string(name: 'DOCKER_PORT', description: 'Docker container port to be proxied by Nginx')
+        string(name: 'AWS_PUBLIC_IP', description: 'Public IP of the AWS EC2 instance running the service')
+    }
+    stages {
+        stage('Check & Create Nginx Configuration') {
+            steps {
+                script {
+                    // Check if the Nginx configuration file exists
+                    def configExists = sh(script: "test -f ${params.NGINX_CONF} && echo 'exists' || echo 'not exists'", returnStdout: true).trim()
+
+                    if (configExists == 'not exists') {
+                        echo "Nginx configuration file does not exist. Creating it now..."
+
+                        // Create or overwrite the NGINX_CONF file with the content of nginx.conf using sudo tee
+                        sh "sudo cat nginx.conf | sudo tee ${params.NGINX_CONF} > /dev/null"
+
+                        // Replace placeholders in the configuration file
+                        sh "sudo sed -i 's|SERVER_NAME|${params.SERVER_NAME}|g' ${params.NGINX_CONF}"
+                        sh "sudo sed -i 's|DOCKER_PORT|${params.DOCKER_PORT}|g' ${params.NGINX_CONF}"
+
+                        echo "Nginx configuration file created."
+
+                        // Enable the new Nginx configuration
+                        sh "sudo ln -sf ${params.NGINX_CONF} /etc/nginx/sites-enabled/"
+                    } else {
+                        echo "Nginx configuration file already exists."
+                    }
+                }
+            }
+        }
+        
+        stage('Update Nginx for AWS') {
+            steps {
+                script {
+                    echo "Calling update_nginx_for_aws_numerical job..."
+
+                    // Trigger the job and capture the result
+                    def nginxUpdateJob = build job: 'update_nginx_for_aws_numerical', 
+                        parameters: [
+                            string(name: 'NGINX_CONF', value: NGINX_CONF_PATH),
+                            string(name: 'SERVER_NAME', value: SERVER_NAME_VAR),
+                            string(name: 'DOCKER_PORT', value: DOCKER_PORT_VAR),
+                            string(name: 'AWS_PUBLIC_IP', value: AWS_PUBLIC_IP_VAR)
+                        ],
+                        propagate: false, // Allows capturing the job result without failing immediately
+                        wait: true
+                    
+                    // Check job result and handle accordingly
+                    if (nginxUpdateJob.result == 'SUCCESS') {
+                        echo "Nginx update job completed successfully."
+                    } else {
+                        echo "Nginx update job failed with status: ${nginxUpdateJob.result}"
+                        currentBuild.result = 'FAILURE'
+                        error("Stopping main pipeline due to failure in Nginx update job.")
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo "Nginx update process completed successfully."
+        }
+        failure {
+            echo "Nginx update process failed."
+        }
+    }
+}
