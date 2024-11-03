@@ -142,9 +142,9 @@ pipeline {
                     // Proceed with Docker deployment on AWS
                     echo "Deploying Docker on AWS..."
                     
-                    sh 'docker-compose down'
-                    sh 'docker-compose pull'
-                    sh 'docker-compose up -d'
+                    sh "~/.docker/cli-plugins/docker-compose down"
+                    sh "~/.docker/cli-plugins/docker-compose pull"
+                    sh "~/.docker/cli-plugins/docker-compose up -d"
 
                 }
             }
