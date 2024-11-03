@@ -1,7 +1,7 @@
 pipeline {
     agent { label 'aws' }
     parameters {
-        choice(name: 'NODE_LOCATION', choices: ['local', 'aws'], description: 'Choose where to deploy')
+        choice(name: 'NODE_LOCATION', choices: [ 'aws', 'local'], description: 'Choose where to deploy')
         booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Skip the Check for Changes stage')
         choice(name: 'DEPLOY_TYPE', choices: ['kubernetes', 'docker'], description: 'Select deployment type')
     }
