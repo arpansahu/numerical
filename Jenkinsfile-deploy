@@ -39,7 +39,7 @@ pipeline {
         }
         stage('Setup Kubernetes Config') {
             when {
-                expression { return params.DEPLOY_TYPE == 'kubernetes' }
+                expression { return params.NODE_CHOICE == 'local' && params.DEPLOY_TYPE == 'kubernetes' }
             }
             steps {
                 script {
@@ -51,6 +51,9 @@ pipeline {
             }
         }
         stage('Check & Create Nginx Configuration') {
+            when {
+                expression { return params.NODE_CHOICE == 'local' && params.DEPLOY }
+            }
             steps {
                 script {
                     // Check if the Nginx configuration file exists
@@ -72,7 +75,7 @@ pipeline {
                         sh "sudo ln -sf ${NGINX_CONF} /etc/nginx/sites-enabled/"
                     } else {
                         echo "Nginx configuration file already exists."
-                    }                    
+                    }
                 }
             }
         }
