@@ -147,10 +147,6 @@ pipeline {
                     // Trigger the new job for Docker deployment on AWS and wait for completion
                     try {
                         echo "Triggering 'aws_docker_deploy_job_numerical' with parameters:"
-                        echo "NGINX_CONF: ${NGINX_CONF}"
-                        echo "SERVER_NAME: ${SERVER_NAME}"
-                        echo "DOCKER_PORT: ${DOCKER_PORT}"
-                        echo "AWS_PUBLIC_IP: ${AWS_IP}"
 
                         def dockerDeployJob = build(
                             job: 'aws_docker_deploy_job_numerical', // Ensure this is the exact job name
@@ -158,7 +154,9 @@ pipeline {
                                 string(name: 'NGINX_CONF', value: NGINX_CONF),
                                 string(name: 'SERVER_NAME', value: SERVER_NAME),
                                 string(name: 'DOCKER_PORT', value: DOCKER_PORT),
-                                string(name: 'AWS_PUBLIC_IP', value: AWS_IP)
+                                string(name: 'AWS_PUBLIC_IP', value: AWS_IP),
+                                string(name: 'PROJECT_NAME_WITH_DASH', value: PROJECT_NAME_WITH_DASH),
+                                string(name: 'ENV_PROJECT_NAME', value: ENV_PROJECT_NAME),
                             ],
                             propagate: false, // Capture the result without failing the main pipeline immediately
                             wait: true
