@@ -141,14 +141,11 @@ pipeline {
 
                     // Proceed with Docker deployment on AWS
                     echo "Deploying Docker on AWS..."
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${AWS_SSH_USER}@${AWS_SSH_HOST} << EOF
-                        cd ${AWS_ENV_DIR}
-                        docker-compose down
-                        docker-compose pull
-                        docker-compose up -d
-                        EOF
-                    """
+                    
+                    sh 'docker-compose down'
+                    sh 'docker-compose pull'
+                    sh 'docker-compose up -d'
+
                 }
             }
         }
