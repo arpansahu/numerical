@@ -150,6 +150,24 @@ pipeline {
 
                     echo "AWS Docker deployment completed."
 
+                    // Check if the service is running on the AWS node by fetching HTTP status
+                    def httpStatus = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://${AWS_IP}:${DOCKER_PORT}", returnStdout: true).trim()
+                    echo "HTTP Status: ${httpStatus}"
+
+                    if (httpStatus == '200') {
+                        echo "Service on AWS is available. Updating Nginx configuration on local node..."
+
+                        // Update the Nginx configuration to point to the AWS IP and reload Nginx
+                        sh """
+                            sudo sed -i 's|proxy_pass .*;|proxy_pass http://${AWS_IP}:${DOCKER_PORT};|' ${NGINX_CONF}
+                            sudo nginx -s reload
+                        """
+                        echo 'Nginx configuration updated and reloaded successfully.'
+                    } else {
+                        echo "Service on AWS is not available. Nginx configuration not updated."
+                        error("AWS service unavailable, HTTP Status: ${httpStatus}")
+                    }
+
                 }
             }
         }
