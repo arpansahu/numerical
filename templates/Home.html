@@ -269,7 +269,7 @@
            $('#equation-area').val(text);
 
         });
-        $('#calculate-button').click(function () {
+        {% comment %} $('#calculate-button').click(function () {
             var text = $('#equation-area').val();
             $.ajax({
              type: 'POST',
@@ -289,6 +289,35 @@
                  $("#alertModal").modal('show');
              }
         })
-        });
+        }); {% endcomment %}
+        $('#calculate-button').click(function () {
+        var text = $('#equation-area').val();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'calculate' %}",
+            data: {
+                equation_string: text,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            dataType: 'json',
+            success: function(data) {
+                // Check if the Backend said "Status 200" (Success)
+                if (data.status === 200) {
+                    // SUCCESS: Update the result box ONLY. Do not show the modal.
+                    $('#result-area').val(data.result);
+                } else {
+                    // LOGIC ERROR (e.g., Unbalanced brackets): Show the Modal
+                    $('#alert_modal_text').text(data.message);
+                    $("#alertModal").modal('show');
+                }
+            },
+            error: function(xhr, status, error){
+                // SYSTEM ERROR (e.g., Server crash): Show the Modal
+                // We use 'xhr.statusText' or a generic message here
+                $('#alert_modal_text').text("An error occurred: " + error);
+                $("#alertModal").modal('show');
+            }
+        })
+    });
     </script>
 {% endblock javascripts %}

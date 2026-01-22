@@ -16,6 +16,12 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 import django
 from django.db.models.signals import pre_init
+from django.http import HttpRequest
+
+def is_ajax(self):
+    return self.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+HttpRequest.is_ajax = is_ajax
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
