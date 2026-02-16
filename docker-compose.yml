@@ -1,16 +1,13 @@
-version: '3'
-
 services:
   web:
     build:  # This section will be used when running locally
       context: .
       dockerfile: Dockerfile
-    image: harbor.arpansahu.me/library/numerical:latest 
+    image: ${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
     env_file: ./.env
-    command: bash -c "python manage.py runserver 0.0.0.0:8003"
-    container_name: numerical
-    volumes:
-      - .:/app
+    container_name: ${ENV_PROJECT_NAME}
+    # volumes:
+    #   - .:/app  # Only for local development, commented out for production deployment
     ports:
-      - "8003:8003"
+      - "${DOCKER_PORT}:${DOCKER_PORT}"
     restart: unless-stopped
