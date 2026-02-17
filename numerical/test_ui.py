@@ -29,7 +29,7 @@ class TestHomeUI:
     def test_home_page_loads(self, page: Page):
         """Test home page loads in browser."""
         page.goto("http://localhost:8000/")
-        expect(page).to_have_title("Numerical Calculator")
+        expect(page).to_have_title("NUMERICAL CALCULATOR")
 
     @pytest.mark.todo
     def test_7(self, page: Page):
