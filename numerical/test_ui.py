@@ -1,332 +1,189 @@
 """
-UI Tests for numerical - Django Test Enforcer
-Generated on: 2026-02-17 11:36:18
-
-These tests FAIL by default - implement them to make them pass!
-Uses Playwright for browser automation.
-
-Run with: pytest numerical/test_ui.py --headed
+UI Tests for numerical calculator
+Complete implementation of all calculator UI tests using Playwright.
 """
 import pytest
 from playwright.sync_api import Page, expect
 
 
-@pytest.fixture(scope="module")
-def authenticated_page(page: Page):
-    """Login and return authenticated page"""
-    # TODO: Implement login
-    # page.goto("http://localhost:8000/login/")
-    # page.fill("input[name='username']", "testuser")
-    # page.fill("input[name='password']", "testpass")
-    # page.click("button[type='submit']")
-    return page
-
-
 @pytest.mark.ui
 class TestHomeUI:
-    """UI tests for Home.html - IMPLEMENT THESE!"""
+    """UI tests for calculator home page."""
 
     def test_home_page_loads(self, page: Page):
-        """Test home page loads in browser."""
+        """Test home page loads successfully."""
         page.goto("http://localhost:8000/")
         expect(page).to_have_title("NUMERICAL CALCULATOR")
 
-    @pytest.mark.todo
+    def test_calculator_display_visible(self, page: Page):
+        """Test calculator display elements are visible."""
+        page.goto("http://localhost:8000/")
+        expect(page.locator("#equation-area")).to_be_visible()
+        expect(page.locator("#result-area")).to_be_visible()
+
+    # Number button tests
     def test_7(self, page: Page):
         """Test button: 7"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for 7"
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="7"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
     def test_8(self, page: Page):
         """Test button: 8"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for 8"
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="8"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
     def test_9(self, page: Page):
         """Test button: 9"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for 9"
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="9"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
-    def test_unknown(self, page: Page):
-        """Test button: ÷"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for ÷"
-
-    @pytest.mark.todo
-    def test_c(self, page: Page):
-        """Test button: C"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for C"
-
-    @pytest.mark.todo
     def test_4(self, page: Page):
         """Test button: 4"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for 4"
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="4"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
     def test_5(self, page: Page):
         """Test button: 5"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for 5"
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="5"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
     def test_6(self, page: Page):
         """Test button: 6"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for 6"
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="6"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
-    def test_unknown_2(self, page: Page):
-        """Test button: ×"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for ×"
-
-    @pytest.mark.todo
-    def test_unknown_3(self, page: Page):
-        """Test button: ⌫"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for ⌫"
-
-    @pytest.mark.todo
     def test_1(self, page: Page):
         """Test button: 1"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for 1"
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="1"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
     def test_2(self, page: Page):
         """Test button: 2"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for 2"
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="2"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
     def test_3(self, page: Page):
         """Test button: 3"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for 3"
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="3"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
-    def test_unknown_4(self, page: Page):
-        """Test button: −"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for −"
-
-    @pytest.mark.todo
-    def test_unknown_5(self, page: Page):
-        """Test button: ("""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for ("
-
-    @pytest.mark.todo
     def test_0(self, page: Page):
         """Test button: 0"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for 0"
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="0"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
-    def test_unknown_6(self, page: Page):
-        """Test button: ."""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for ."
+    # Operator button tests
+    def test_unknown(self, page: Page):
+        """Test button: ÷ (division)"""
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="/"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
-    def test_unknown_7(self, page: Page):
-        """Test button: ="""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for ="
+    def test_unknown_2(self, page: Page):
+        """Test button: × (multiplication)"""
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="*"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
+    def test_unknown_4(self, page: Page):
+        """Test button: − (subtraction)"""
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="-"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
+
     def test_unknown_8(self, page: Page):
-        """Test button: +"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for +"
+        """Test button: + (addition)"""
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="+"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
+    def test_unknown_5(self, page: Page):
+        """Test button: ( (open parenthesis)"""
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="("]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
+
     def test_unknown_9(self, page: Page):
-        """Test button: )"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .calc-btn
-        # element = page.locator(".calc-btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for )"
+        """Test button: ) (close parenthesis)"""
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value=")"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
+    def test_unknown_6(self, page: Page):
+        """Test button: . (decimal point)"""
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="."]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
+
+    def test_unknown_7(self, page: Page):
+        """Test button: = (equals)"""
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-value="="]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
+
+    # Function button tests
+    def test_c(self, page: Page):
+        """Test button: C (clear)"""
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-action="clear"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
+
+    def test_unknown_3(self, page: Page):
+        """Test button: ⌫ (backspace)"""
+        page.goto("http://localhost:8000/")
+        button = page.locator('button[data-action="backspace"]')
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
+
     def test_calculatebutton(self, page: Page):
-        """Test button: calculate-button"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: #calculate-button
-        # element = page.locator("#calculate-button")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for calculate-button"
+        """Test calculate button"""
+        page.goto("http://localhost:8000/")
+        button = page.locator("#calculate-button")
+        expect(button).to_be_visible()
+        expect(button).to_be_enabled()
 
-    @pytest.mark.todo
+    # Modal tests
     def test_button(self, page: Page):
-        """Test button: button"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .btn-close
-        # element = page.locator(".btn-close")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for button"
+        """Test modal close button (btn-close)"""
+        page.goto("http://localhost:8000/")
+        # Modal close button exists in DOM but might not be visible initially
+        # Just check it exists
+        expect(page.locator(".btn-close")).to_have_count(1)
 
-    @pytest.mark.todo
     def test_close(self, page: Page):
-        """Test button: Close"""
-        # TODO: Navigate to the correct page
-        # page.goto("http://localhost:8000/")
-        
-        # Locate element using: .btn
-        # element = page.locator(".btn")
-        # expect(element).to_be_visible()
-        
-        # This test FAILS until you implement it!
-        assert False, "TODO: Implement test for Close"
+        """Test modal Close button"""
+        page.goto("http://localhost:8000/")
+        # Close button in modal exists but might not be visible
+        # Just verify it's in the DOM
+        close_buttons = page.locator('button.btn:has-text("Close")')
+        expect(close_buttons).to_have_count(1)
 
