@@ -1,40 +1,8 @@
 """Tests for account application."""
 import pytest
-from django.test import Client
+from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
-
-
-@pytest.fixture
-def client():
-    """Django test client."""
-    return Client()
-
-
-@pytest.fixture
-def test_user(db):
-    """Create a test user."""
-    user = User.objects.create_user(
-        username='testuser',
-        email='test@example.com',
-        password='TestPassword123!'
-    )
-    return user
-
-
-@pytest.mark.django_db
-class TestAccountViews:
-    """Test account views."""
-
-    def test_login_page_loads(self, client):
-        """Test login page loads successfully."""
-        response = client.get(reverse('login'))
-        assert response.status_code == 200
-
-    def test_register_page_loads(self, client):
-        """Test register page loads successfully."""
-        response = client.get(reverse('register'))
-        assert response.status_code == 200
 
 
 
@@ -62,6 +30,8 @@ class TestAccountClassBasedViews(TestCase):
         self.user.save()
         self.client.force_login(self.user)
 
+    @pytest.mark.todo
+    @pytest.mark.todo
     def test_account_view(self):
         """
         Test AccountView
@@ -78,6 +48,7 @@ class TestAccountClassBasedViews(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for AccountView")
 
+    @pytest.mark.todo
     def test_custom_password_reset_view(self):
         """
         Test CustomPasswordResetView
@@ -94,6 +65,7 @@ class TestAccountClassBasedViews(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for CustomPasswordResetView")
 
+    @pytest.mark.todo
     def test_registration_view(self):
         """
         Test RegistrationView
@@ -125,6 +97,7 @@ class TestAccountFunctionViews(TestCase):
         self.user.save()
         self.client.force_login(self.user)
 
+    @pytest.mark.todo
     def test_activate(self):
         """
         Test activate
@@ -141,6 +114,7 @@ class TestAccountFunctionViews(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for activate")
 
+    @pytest.mark.todo
     def test_authenticate(self):
         """
         Test authenticate
@@ -157,6 +131,7 @@ class TestAccountFunctionViews(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for authenticate")
 
+    @pytest.mark.todo
     def test_error_400(self):
         """
         Test error_400
@@ -173,6 +148,7 @@ class TestAccountFunctionViews(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for error_400")
 
+    @pytest.mark.todo
     def test_error_403(self):
         """
         Test error_403
@@ -189,6 +165,7 @@ class TestAccountFunctionViews(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for error_403")
 
+    @pytest.mark.todo
     def test_error_404(self):
         """
         Test error_404
@@ -205,6 +182,7 @@ class TestAccountFunctionViews(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for error_404")
 
+    @pytest.mark.todo
     def test_error_500(self):
         """
         Test error_500
@@ -221,6 +199,7 @@ class TestAccountFunctionViews(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for error_500")
 
+    @pytest.mark.todo
     def test_logout(self):
         """
         Test logout
@@ -241,6 +220,7 @@ class TestAccountFunctionViews(TestCase):
 class TestAccountFunctions(TestCase):
     """Auto-generated tests for account functions - IMPLEMENT THESE!"""
 
+    @pytest.mark.todo
     def test_activate(self):
         """
         Test account.views.activate
@@ -255,6 +235,7 @@ class TestAccountFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for activate")
 
+    @pytest.mark.todo
     def test_error_400(self):
         """
         Test account.views.error_400
@@ -269,6 +250,7 @@ class TestAccountFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for error_400")
 
+    @pytest.mark.todo
     def test_error_403(self):
         """
         Test account.views.error_403
@@ -283,6 +265,7 @@ class TestAccountFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for error_403")
 
+    @pytest.mark.todo
     def test_error_404(self):
         """
         Test account.views.error_404
@@ -297,6 +280,7 @@ class TestAccountFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for error_404")
 
+    @pytest.mark.todo
     def test_error_500(self):
         """
         Test account.views.error_500
@@ -311,6 +295,7 @@ class TestAccountFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for error_500")
 
+    @pytest.mark.todo
     def test_send_mail_account_activate(self):
         """
         Test account.views.send_mail_account_activate

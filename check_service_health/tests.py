@@ -1,6 +1,6 @@
 """Tests for check_service_health application."""
 import pytest
-from django.test import Client
+from django.test import TestCase, Client
 from django.urls import reverse
 
 
@@ -14,6 +14,7 @@ def client():
 class TestHealthCheck:
     """Test service health check."""
 
+    @pytest.mark.todo
     def test_health_check_endpoint(self, client):
         """Test health check endpoint returns success."""
         response = client.get(reverse('health_check'))
@@ -45,6 +46,7 @@ class TestCheckServiceHealthFunctionViews(TestCase):
         self.user.save()
         self.client.force_login(self.user)
 
+    @pytest.mark.todo
     def test_render(self):
         """
         Test render

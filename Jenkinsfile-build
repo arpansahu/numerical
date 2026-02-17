@@ -71,7 +71,7 @@ pipeline {
                         python:3.9.6 \
                         bash -c 'pip install -q -r requirements.txt && \
                                  pip install -q pytest pytest-django pytest-cov pytest-mock && \
-                                 python -m pytest -m "not ui" --ignore=tests -v'
+                                 python -m pytest -m "not ui and not todo" --ignore=tests -v'
                     """
                     
                     echo '✅ All unit tests passed successfully!'

@@ -1,6 +1,19 @@
+import pytest
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
+
+
+class TestBasicViews(TestCase):
+    """Basic tests for numerical views."""
+
+    def setUp(self):
+        self.client = Client()
+
+    def test_home_page_loads(self):
+        """Test home page loads successfully."""
+        response = self.client.get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
 
 
 # ======================================================================
@@ -23,6 +36,7 @@ class TestNumericalFunctionViews(TestCase):
         self.user.save()
         self.client.force_login(self.user)
 
+    @pytest.mark.todo
     def test_unnamed(self):
         """
         Test unnamed
@@ -39,6 +53,7 @@ class TestNumericalFunctionViews(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for unnamed")
 
+    @pytest.mark.todo
     def test_unnamed(self):
         """
         Test unnamed
@@ -59,6 +74,7 @@ class TestNumericalFunctionViews(TestCase):
 class TestNumericalFunctions(TestCase):
     """Auto-generated tests for numerical functions - IMPLEMENT THESE!"""
 
+    @pytest.mark.todo
     def test_apply_op(self):
         """
         Test numerical.utils.applyOp
@@ -73,6 +89,7 @@ class TestNumericalFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for applyOp")
 
+    @pytest.mark.todo
     def test_are_brackets_balanced(self):
         """
         Test numerical.utils.areBracketsBalanced
@@ -87,6 +104,7 @@ class TestNumericalFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for areBracketsBalanced")
 
+    @pytest.mark.todo
     def test_evaluate(self):
         """
         Test numerical.utils.evaluate
@@ -101,6 +119,7 @@ class TestNumericalFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for evaluate")
 
+    @pytest.mark.todo
     def test_precedence(self):
         """
         Test numerical.utils.precedence
@@ -115,6 +134,7 @@ class TestNumericalFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for precedence")
 
+    @pytest.mark.todo
     def test_get_git_commit_hash(self):
         """
         Test numerical.settings.get_git_commit_hash
@@ -129,6 +149,7 @@ class TestNumericalFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for get_git_commit_hash")
 
+    @pytest.mark.todo
     def test_large_resource(self):
         """
         Test numerical.urls.large_resource
@@ -143,6 +164,7 @@ class TestNumericalFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for large_resource")
 
+    @pytest.mark.todo
     def test_trigger_error(self):
         """
         Test numerical.urls.trigger_error
@@ -157,6 +179,7 @@ class TestNumericalFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for trigger_error")
 
+    @pytest.mark.todo
     def test_are_brackets_balanced(self):
         """
         Test numerical.views.areBracketsBalanced
@@ -171,6 +194,7 @@ class TestNumericalFunctions(TestCase):
         # This test FAILS until you implement it!
         self.fail("TODO: Implement test for areBracketsBalanced")
 
+    @pytest.mark.todo
     def test_evaluate(self):
         """
         Test numerical.views.evaluate
