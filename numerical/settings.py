@@ -46,7 +46,7 @@ MAIL_JET_API_SECRET = config('MAIL_JET_API_SECRET')
 # Domain and Protocol Configuration
 # For LOCAL: DOMAIN=localhost:8003 and PROTOCOL=http
 # For PRODUCTION: DOMAIN=yourdomain.com and PROTOCOL=https
-DOMAIN = config('DOMAIN', default='localhost:8003' if DEBUG else 'numerical.arpansahu.me')
+DOMAIN = config('DOMAIN', default='localhost:8003' if DEBUG else 'numerical.arpansahu.space')
 PROTOCOL = config('PROTOCOL', default='http' if DEBUG else 'https')
 
 SENTRY_ENVIRONMENT = config('SENTRY_ENVIRONMENT')  # production Or "staging", "development", etc.
@@ -71,7 +71,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'check_service_health',
-    'account'
+    'account',
+    'django_test_enforcer',
 ]
 
 MIDDLEWARE = [
@@ -155,152 +156,88 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-if not DEBUG and USE_S3:
-    if BUCKET_TYPE == 'AWS':
-        AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-        AWS_STATIC_LOCATION = f'portfolio/{PROJECT_NAME}/static'
-        AWS_PUBLIC_MEDIA_LOCATION = f'portfolio/{PROJECT_NAME}/media'
-        PRIVATE_MEDIA_LOCATION = f'portfolio/{PROJECT_NAME}/private'
-
-        STORAGES = {
-            "default": {
-                "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-                "OPTIONS": {
-                    "location": AWS_PUBLIC_MEDIA_LOCATION,
-                    "bucket_name": AWS_STORAGE_BUCKET_NAME,
-                    "access_key": AWS_ACCESS_KEY_ID,
-                    "secret_key": AWS_SECRET_ACCESS_KEY,
-                    "default_acl": "public-read",
-                    "querystring_auth": False,
-                    "object_parameters": {
-                        "CacheControl": "max-age=86400",
-                    },
-                    "custom_domain": AWS_S3_CUSTOM_DOMAIN,
-                },
-            },
-            "staticfiles": {
-                "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-                "OPTIONS": {
-                    "location": AWS_STATIC_LOCATION,
-                    "bucket_name": AWS_STORAGE_BUCKET_NAME,
-                    "access_key": AWS_ACCESS_KEY_ID,
-                    "secret_key": AWS_SECRET_ACCESS_KEY,
-                    "default_acl": "public-read",
-                    "querystring_auth": False,
-                    "object_parameters": {
-                        "CacheControl": "max-age=86400",
-                    },
-                    "custom_domain": AWS_S3_CUSTOM_DOMAIN,
-                },
-            },
-        }
-
-        STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/'
-        MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_PUBLIC_MEDIA_LOCATION}/'
-
+if not USE_S3:
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    MEDIA_URL = '/media/'
+else:
+    AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
+    
+    # Common S3 settings
+    AWS_S3_FILE_OVERWRITE = False  # Prevent overwriting files with the same name
+    AWS_DEFAULT_ACL = None  # Ensure files are not public by default
+    
+    # Switch between MinIO and AWS S3
+    if BUCKET_TYPE == 'MINIO':
+        # MinIO/S3 Configuration
+        AWS_QUERYSTRING_AUTH = False  # Don't add query parameters to URLs (use bucket policy instead)
+        AWS_S3_SIGNATURE_VERSION = 's3v4'
+        AWS_S3_USE_SSL = True
+        AWS_S3_VERIFY = True
+        AWS_S3_ADDRESSING_STYLE = 'path'  # Use path-style addressing for MinIO
+        
+        # MinIO API endpoint through nginx proxy (for upload/management operations)
+        AWS_S3_ENDPOINT_URL = config('AWS_S3_ENDPOINT_URL', default='https://minioapi.arpansahu.space')
+        
+        # Custom domain for serving files (use API endpoint, not console)
+        AWS_S3_CUSTOM_DOMAIN = f'minioapi.arpansahu.space/{AWS_STORAGE_BUCKET_NAME}'
+    elif BUCKET_TYPE == 'AWS':
+        AWS_S3_ENDPOINT_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+        AWS_S3_CUSTOM_DOMAIN = AWS_S3_ENDPOINT_URL
     elif BUCKET_TYPE == 'BLACKBLAZE':
         AWS_S3_REGION_NAME = 'us-east-005'
         AWS_S3_ENDPOINT = f's3.{AWS_S3_REGION_NAME}.backblazeb2.com'
         AWS_S3_ENDPOINT_URL = f'https://{AWS_S3_ENDPOINT}'
-        
-        AWS_STATIC_LOCATION = f'portfolio/{PROJECT_NAME}/static'
-        AWS_PUBLIC_MEDIA_LOCATION = f'portfolio/{PROJECT_NAME}/media'
-        PRIVATE_MEDIA_LOCATION = f'portfolio/{PROJECT_NAME}/private'
+        AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.backblazeb2.com'
 
-        STORAGES = {
-            "default": {
-                "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-                "OPTIONS": {
-                    "location": AWS_PUBLIC_MEDIA_LOCATION,
-                    "bucket_name": AWS_STORAGE_BUCKET_NAME,
-                    "access_key": AWS_ACCESS_KEY_ID,
-                    "secret_key": AWS_SECRET_ACCESS_KEY,
-                    "endpoint_url": AWS_S3_ENDPOINT_URL,
-                    "region_name": AWS_S3_REGION_NAME,
-                    "default_acl": "public-read",
-                    "querystring_auth": False,
-                    "object_parameters": {
-                        "CacheControl": "max-age=86400",
-                    },
-                },
+    # Static and Media File Storage Settings
+    AWS_STATIC_LOCATION = f'portfolio/{PROJECT_NAME}/static'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/'
+    
+    AWS_PUBLIC_MEDIA_LOCATION = f'portfolio/{PROJECT_NAME}/media'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_PUBLIC_MEDIA_LOCATION}/'
+    
+    AWS_PROTECTED_MEDIA_LOCATION = f'portfolio/{PROJECT_NAME}/protected'
+    
+    AWS_PRIVATE_MEDIA_LOCATION = f'portfolio/{PROJECT_NAME}/private'
+
+    # Use your custom storage classes with modern STORAGES dict
+    STORAGES = {
+        'default': {
+            'BACKEND': f'{PROJECT_NAME}.storage_backends.PublicMediaStorage',
+            'OPTIONS': {
+                'location': AWS_PUBLIC_MEDIA_LOCATION,
+                'bucket_name': AWS_STORAGE_BUCKET_NAME,
+                'endpoint_url': AWS_S3_ENDPOINT_URL,
+                'access_key': AWS_ACCESS_KEY_ID,
+                'secret_key': AWS_SECRET_ACCESS_KEY,
             },
-            "staticfiles": {
-                "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-                "OPTIONS": {
-                    "location": AWS_STATIC_LOCATION,
-                    "bucket_name": AWS_STORAGE_BUCKET_NAME,
-                    "access_key": AWS_ACCESS_KEY_ID,
-                    "secret_key": AWS_SECRET_ACCESS_KEY,
-                    "endpoint_url": AWS_S3_ENDPOINT_URL,
-                    "region_name": AWS_S3_REGION_NAME,
-                    "default_acl": "public-read",
-                    "querystring_auth": False,
-                    "object_parameters": {
-                        "CacheControl": "max-age=86400",
-                    },
-                },
+        },
+        'staticfiles': {
+            'BACKEND': f'{PROJECT_NAME}.storage_backends.StaticStorage',
+            'OPTIONS': {
+                'location': AWS_STATIC_LOCATION,
+                'bucket_name': AWS_STORAGE_BUCKET_NAME,
+                'endpoint_url': AWS_S3_ENDPOINT_URL,
+                'access_key': AWS_ACCESS_KEY_ID,
+                'secret_key': AWS_SECRET_ACCESS_KEY,
             },
-        }
-
-        STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT}/{AWS_STATIC_LOCATION}/'
-        MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT}/{AWS_PUBLIC_MEDIA_LOCATION}/'
-
-    elif BUCKET_TYPE == 'MINIO':
-        AWS_S3_REGION_NAME = 'us-east-1'  # MinIO doesn't require this, but boto3 does
-        AWS_S3_ENDPOINT_URL = 'https://minioapi.arpansahu.space'
-        AWS_S3_CUSTOM_DOMAIN = f'minioapi.arpansahu.space/{AWS_STORAGE_BUCKET_NAME}'
-        
-        AWS_STATIC_LOCATION = f'portfolio/{PROJECT_NAME}/static'
-        AWS_PUBLIC_MEDIA_LOCATION = f'portfolio/{PROJECT_NAME}/media'
-        PRIVATE_MEDIA_LOCATION = f'portfolio/{PROJECT_NAME}/private'
-
-        STORAGES = {
-            "default": {
-                "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-                "OPTIONS": {
-                    "location": AWS_PUBLIC_MEDIA_LOCATION,
-                    "bucket_name": AWS_STORAGE_BUCKET_NAME,
-                    "access_key": AWS_ACCESS_KEY_ID,
-                    "secret_key": AWS_SECRET_ACCESS_KEY,
-                    "endpoint_url": AWS_S3_ENDPOINT_URL,
-                    "region_name": AWS_S3_REGION_NAME,
-                    "default_acl": "public-read",
-                    "querystring_auth": False,
-                    "object_parameters": {
-                        "CacheControl": "max-age=86400",
-                    },
-                    "custom_domain": AWS_S3_CUSTOM_DOMAIN,
-                },
+        },
+        'private': {
+            'BACKEND': f'{PROJECT_NAME}.storage_backends.PrivateMediaStorage',
+            'OPTIONS': {
+                'location': AWS_PRIVATE_MEDIA_LOCATION,
+                'bucket_name': AWS_STORAGE_BUCKET_NAME,
+                'endpoint_url': AWS_S3_ENDPOINT_URL,
+                'access_key': AWS_ACCESS_KEY_ID,
+                'secret_key': AWS_SECRET_ACCESS_KEY,
+                'default_acl': 'private',
+                'custom_domain': False,  # Disable custom domain for private files
             },
-            "staticfiles": {
-                "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-                "OPTIONS": {
-                    "location": AWS_STATIC_LOCATION,
-                    "bucket_name": AWS_STORAGE_BUCKET_NAME,
-                    "access_key": AWS_ACCESS_KEY_ID,
-                    "secret_key": AWS_SECRET_ACCESS_KEY,
-                    "endpoint_url": AWS_S3_ENDPOINT_URL,
-                    "region_name": AWS_S3_REGION_NAME,
-                    "default_acl": "public-read",
-                    "querystring_auth": False,
-                    "object_parameters": {
-                        "CacheControl": "max-age=86400",
-                    },
-                    "custom_domain": AWS_S3_CUSTOM_DOMAIN,
-                },
-            },
-        }
+        },
+    }
 
-        STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/'
-        MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_PUBLIC_MEDIA_LOCATION}/'
-else:
-    # Static files (CSS, JavaScript, Images)
-    # https://docs.djangoproject.com/en/3.2/howto/static-files/
-
-    STATIC_URL = '/static/'
-
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-    MEDIA_URL = '/media/'
+# Development settings (for local media/static handling)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"), ]
@@ -309,20 +246,43 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"), ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Security Settings for Production
+if not DEBUG:
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
 # REFERRER POLICY
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 #Caching
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': REDIS_CLOUD_URL,
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        },
-        'KEY_PREFIX': PROJECT_NAME
+import ssl
+
+if not DEBUG:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': REDIS_CLOUD_URL,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'CONNECTION_POOL_KWARGS': {
+                    'ssl_cert_reqs': ssl.CERT_NONE  # Allow self-signed certs
+                }
+            },
+            'KEY_PREFIX': PROJECT_NAME
+        }
     }
-}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+        }
+    }
 
 # Get the current git commit hash
 def get_git_commit_hash():
@@ -331,25 +291,22 @@ def get_git_commit_hash():
     except Exception:
         return None
 
+# Adjust sampling rates based on environment
+traces_sample_rate = 0.1 if SENTRY_ENVIRONMENT == 'production' else 1.0
+profiles_sample_rate = 0.1 if SENTRY_ENVIRONMENT == 'production' else 1.0
+
 sentry_sdk.init(
     dsn=SENTRY_DSH_URL,
     integrations=[
             DjangoIntegration(
                 transaction_style='url',
                 middleware_spans=True,
-                # signals_spans=True,
-                # signals_denylist=[
-                #     django.db.models.signals.pre_init,
-                #     django.db.models.signals.post_init,
-                # ],
-                # cache_spans=False,
             ),
         ],
-    traces_sample_rate=1.0,  # Adjust this according to your needs
+    traces_sample_rate=traces_sample_rate,  # 10% in production, 100% in dev
     send_default_pii=True,  # To capture personal identifiable information (optional)
     release=get_git_commit_hash(),  # Set the release to the current git commit hash
     environment=SENTRY_ENVIRONMENT,  # Or "staging", "development", etc.
-    # profiles_sample_rate=1.0,
 )
 
 LOGGING = {
@@ -398,3 +355,25 @@ LOGGING = {
 
 # CSRF Protection
 CSRF_TRUSTED_ORIGINS = [f'{PROTOCOL}://{DOMAIN}', f'{PROTOCOL}://*.{DOMAIN.split(":")[0]}']
+
+# Django Test Enforcer Configuration
+DJANGO_TEST_ENFORCER = {
+    'enabled': True,
+    'coverage_threshold': 80,
+    'fail_under': False,  # Set to True to fail CI if below threshold
+    'exclude_apps': [
+        'django.contrib.*',
+    ],
+    'exclude_patterns': [
+        'migrations/*',
+        'admin.py',
+    ],
+    'include_class_based_views': True,
+    'include_function_views': True,
+    'include_ui_elements': True,
+    'generate_ui_tests': True,
+    'test_output_location': 'app',  # 'app' (default), 'folder', or 'both'
+    'ui_test_output_location': 'app',
+    'ui_test_filename': 'test_ui.py',
+    'ui_framework': 'playwright',  # 'playwright', 'selenium', or 'django'
+}

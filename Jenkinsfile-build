@@ -1,14 +1,13 @@
 pipeline {
     agent any
     parameters {
-        booleanParam(name: 'skip_checks', defaultValue: false, description: 'Skip the Check for Changes stage')
+        booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip running tests')
+        booleanParam(name: 'SKIP_CHANGE_CHECK', defaultValue: false, description: 'Skip the Check for Changes stage')
     }
     environment {
-        REGISTRY = "harbor.arpansahu.me"
-        REPOSITORY = "library/numerical"
+        // Only Jenkins-computed values here (before .env is loaded)
         IMAGE_TAG = "${env.BUILD_ID}"
         COMMIT_FILE = "${env.WORKSPACE}/last_commit.txt"
-        ENV_PROJECT_NAME = "numerical"
     }
     stages {
         stage('Checkout') {
@@ -16,10 +15,128 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Setup Environment') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'numerical_env_file', variable: 'ENV_FILE')]) {
+                        // Read the credentials file and write to .env using Jenkins API
+                        def envContent = readFile(file: env.ENV_FILE)
+                        writeFile(file: '.env', text: envContent)
+                        echo '.env file created successfully from credentials'
+                        
+                        // Load environment variables from .env for use in pipeline
+                        def envVars = sh(script: 'cat .env | grep -v "^#" | grep -v "^\$" | xargs', returnStdout: true).trim()
+                        if (envVars) {
+                            envVars.split().each { envVar ->
+                                if (envVar.contains('=')) {
+                                    def parts = envVar.split('=', 2)
+                                    def key = parts[0]
+                                    def value = parts.length > 1 ? parts[1] : ''
+                                    if (key) {
+                                        env."${key}" = value
+                                    }
+                                }
+                            }
+                        }
+                        echo "✅ Environment variables loaded from .env"
+                        
+                        // Derive computed variables from base variables
+                        env.BUILD_PROJECT_NAME = "${env.ENV_PROJECT_NAME}_build"
+                        env.PROJECT_NAME_WITH_DASH = env.ENV_PROJECT_NAME.replace('_', '-')
+                        
+                        // Set registry path for Docker operations
+                        env.REGISTRY = env.DOCKER_REGISTRY
+                        env.REPOSITORY = "${env.DOCKER_REPOSITORY}/${env.DOCKER_IMAGE_NAME}"
+                        
+                        echo "Computed BUILD_PROJECT_NAME: ${env.BUILD_PROJECT_NAME}"
+                        echo "Computed PROJECT_NAME_WITH_DASH: ${env.PROJECT_NAME_WITH_DASH}"
+                        echo "Docker Image: ${env.REGISTRY}/${env.REPOSITORY}:${IMAGE_TAG}"
+                    }
+                }
+            }
+        }
+        stage('Run Tests') {
+            when {
+                expression { return !params.SKIP_TESTS }
+            }
+            steps {
+                script {
+                    echo 'Running Django Unit Tests...'
+                    
+                    sh """
+                    docker run --rm \
+                        -v \$(pwd):/app \
+                        -w /app \
+                        --env-file .env \
+                        python:3.9.6 \
+                        bash -c 'pip install -q -r requirements.txt && \
+                                 pip install -q pytest pytest-django pytest-cov pytest-mock && \
+                                 python -m pytest -m "not ui" --ignore=tests -v'
+                    """
+                    
+                    echo '✅ All unit tests passed successfully!'
+                }
+            }
+        }
+        stage('Run UI Tests') {
+            when {
+                expression { return !params.SKIP_TESTS }
+            }
+            steps {
+                script {
+                    echo 'Running Playwright UI Tests with embedded Django server...'
+                    
+                    def uiTestResult = sh(
+                        script: '''
+                        docker run --rm \
+                            -v $(pwd):/app \
+                            -w /app \
+                            --env-file .env \
+                            mcr.microsoft.com/playwright/python:v1.40.0-jammy \
+                            bash -c '
+                                pip install -q -r requirements.txt
+                                pip install -q pytest pytest-django pytest-playwright
+                                playwright install chromium
+                                
+                                export TEST_DB_FILE=/tmp/test_db.sqlite3
+                                python manage.py migrate --settings=numerical.test_settings --verbosity=0
+                                python manage.py runserver 0.0.0.0:8000 --settings=numerical.test_settings &
+                                SERVER_PID=$!
+                                
+                                echo "Waiting for Django server to start..."
+                                for i in {1..30}; do
+                                    if curl -s http://127.0.0.1:8000/ > /dev/null 2>&1; then
+                                        echo "Django server is ready!"
+                                        break
+                                    fi
+                                    sleep 1
+                                done
+                                
+                                pytest */test_ui.py -m "ui and not todo" -v --tb=short -x
+                                TEST_RESULT=$?
+                                
+                                kill $SERVER_PID 2>/dev/null || true
+                                
+                                exit $TEST_RESULT
+                            '
+                        ''',
+                        returnStatus: true
+                    )
+                    
+                    if (uiTestResult == 0) {
+                        echo '✅ All UI tests passed successfully!'
+                    } else if (uiTestResult == 125) {
+                        echo '⚠️ UI tests skipped - Docker image pull failed (network issue)'
+                    } else {
+                        error "UI tests failed with exit code: ${uiTestResult}"
+                    }
+                }
+            }
+        }
         stage('Check for Changes') {
             steps {
                 script {
-                    if (params.skip_checks) {
+                    if (params.SKIP_CHANGE_CHECK) {
                         echo "Skipping Checks is True. Proceeding with build."
                         BUILD_STATUS = 'BUILT'
                         currentBuild.description = "${currentBuild.fullDisplayName} Skipping Checks is True. Proceeding with build."
@@ -62,17 +179,6 @@ pipeline {
                         // Save the current commit hash to the file
                         writeFile(file: COMMIT_FILE, text: currentCommit)
                     }
-                }
-            }
-        }
-        stage('Dependencies') {
-            when {
-                expression { return BUILD_STATUS != 'NOT_BUILT' }
-            }
-            steps {
-                script {
-                    // Copy .env file to the workspace
-                    sh "sudo cp /root/projectenvs/${ENV_PROJECT_NAME}/.env ${env.WORKSPACE}/"
                 }
             }
         }
@@ -151,7 +257,7 @@ pipeline {
                     ]
                 }'"""
 
-                // Trigger numerical job only if the build is stable
+                // Trigger numerical deploy job only if the build is stable
                 build job: 'numerical', parameters: [booleanParam(name: 'DEPLOY', value: true)], wait: false
             }
         }

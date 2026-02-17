@@ -82,7 +82,7 @@ The most common Redis use cases are session cache, full-page cache, queues, lead
 
 ## Demo
 
-Available at: https://arpansahu.me
+Available at: https://arpansahu.space
 
 ## License
 
@@ -2150,7 +2150,7 @@ services:
     build:  # This section will be used when running locally
       context: .
       dockerfile: Dockerfile
-    image: harbor.arpansahu.me/library/numerical:latest 
+    image: harbor.arpansahu.space/library/numerical:latest 
     env_file: ./.env
     command: bash -c "python manage.py runserver 0.0.0.0:8003"
     container_name: numerical
@@ -3266,7 +3266,7 @@ error_log                   /var/log/nginx/supersecure.error.log;
 
 server {
     listen         80;
-    server_name    arpansahu.me;
+    server_name    arpansahu.space;
     # force https-redirects
     if ($scheme = http) {
         return 301 https://$server_name$request_uri;
@@ -3284,8 +3284,8 @@ server {
     }
 
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/arpansahu.me/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/arpansahu.me/privkey.pem; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/arpansahu.space/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/arpansahu.space/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 }
@@ -10197,7 +10197,7 @@ pipeline {
 
 Note: agent {label 'local'} is used to specify which node will execute the jenkins job deployment. So local linux server is labelled with 'local' are the project with this label will be executed in local machine node.
 
-* Configure a Jenkins project from jenkins ui located at https://jenkins.arpansahu.me
+* Configure a Jenkins project from jenkins ui located at https://jenkins.arpansahu.space
 
 Make sure to use Pipeline project and name it whatever you want I have named it as per great_chat
 

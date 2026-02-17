@@ -47,13 +47,13 @@
 </head>
 <body class="d-flex flex-column min-vh-100 g-sidenav-show bg-gray-100">
   <!-- Main content with flex-grow to take available space -->
-  <main class="main-content flex-grow-1 position-relative max-height-vh-100 h-100 border-radius-lg">
+  <main class="main-content flex-grow-1 position-relative border-radius-lg">
       {% include 'snippets/header.html' %}
       {% block content %}{% endblock %}
   </main>
 
   <!-- Footer at the bottom -->
-  <footer class="container-fluid py-4">
+  <footer class="container-fluid py-4 mt-auto">
       {% include 'snippets/footer.html' %}
   </footer>
 
