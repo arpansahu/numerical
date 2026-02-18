@@ -27,9 +27,6 @@ class TestAccountBasic(TestCase):
 # These tests FAIL by default - implement them to make them pass!
 # ======================================================================
 
-from django.test import TestCase, Client
-from django.urls import reverse
-from django.contrib.auth.models import User
 
 class TestAccountClassBasedViews(TestCase):
     """Auto-generated tests for account class-based views - IMPLEMENT THESE!"""
