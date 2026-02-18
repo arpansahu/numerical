@@ -2127,37 +2127,40 @@ For CI/CD integration, see Jenkins documentation.
 
 
 ```bash
-FROM python:3.10.7-slim
+FROM python:3.10.7
 
 WORKDIR /app
 
-COPY . .
+# Copy requirements first for better layer caching
+COPY requirements.txt .
 
-RUN pip3 install -r requirements.txt
+# Install dependencies
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application
+COPY . .
 
 EXPOSE 8003
 
-CMD bash -c "python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8003 numerical.wsgi"
+CMD bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8003 numerical.wsgi"
 ```
 
 Create a file named docker-compose.yml and add following lines in it
 
 ```bash
-version: '3'
-
 services:
   web:
     build:  # This section will be used when running locally
       context: .
       dockerfile: Dockerfile
-    image: harbor.arpansahu.space/library/numerical:latest 
+    image: ${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
     env_file: ./.env
-    command: bash -c "python manage.py runserver 0.0.0.0:8003"
-    container_name: numerical
-    volumes:
-      - .:/app
+    command: bash -c "python manage.py migrate && gunicorn --bind 0.0.0.0:${DOCKER_PORT} numerical.wsgi"
+    container_name: ${ENV_PROJECT_NAME}
+    # volumes:
+    #   - .:/app  # Only for local development, commented out for production deployment
     ports:
-      - "8003:8003"
+      - "${DOCKER_PORT}:${DOCKER_PORT}"
     restart: unless-stopped
 ```
 
@@ -10197,7 +10200,7 @@ pipeline {
 
 Note: agent {label 'local'} is used to specify which node will execute the jenkins job deployment. So local linux server is labelled with 'local' are the project with this label will be executed in local machine node.
 
-* Configure a Jenkins project from jenkins ui located at https://jenkins.arpansahu.space
+* Configure a Jenkins project from jenkins ui located at https://jenkins.arpansahu.me
 
 Make sure to use Pipeline project and name it whatever you want I have named it as per great_chat
 
@@ -10265,11 +10268,26 @@ SECRET_KEY=
 
 DEBUG=
 
+# ALLOWED_HOSTS supports:
+# - Domain names: numerical.arpansahu.space
+# - Wildcards: .arpansahu.space (all subdomains)
+# - IP addresses: 127.0.0.1, 192.168.1.200
+# - CIDR subnets: 10.42.0.0/16 (Kubernetes pod network)
 ALLOWED_HOSTS=
+
+# Set to False for local development (serves files from local static/ folder)
+# Set to True for production (serves files from MinIO/S3)
+USE_S3=True
 
 MAIL_JET_API_KEY=
 
 MAIL_JET_API_SECRET=
+
+# Verified sender email (must be verified in Mailjet)
+MAIL_JET_EMAIL_ADDRESS=
+
+# Reply-to email for user responses
+MY_EMAIL_ADDRESS=
 
 AWS_ACCESS_KEY_ID=
 
@@ -10277,12 +10295,21 @@ AWS_SECRET_ACCESS_KEY=
 
 AWS_STORAGE_BUCKET_NAME=
 
+# MinIO API endpoint (used by boto3/django-storages)
+AWS_S3_ENDPOINT_URL=https://minioapi.arpansahu.space
+
+# Custom domain for serving files (calculated: endpoint/bucket)
+AWS_S3_CUSTOM_DOMAIN=minioapi.arpansahu.space/arpansahu-one-bucket
+
 BUCKET_TYPE=
 
-DATABASE_URL= 
+DATABASE_URL=
 
 REDIS_CLOUD_URL=
 
+# Domain and Protocol Configuration
+# For LOCAL: DOMAIN=localhost:8003 and PROTOCOL=http
+# For PRODUCTION: DOMAIN=yourdomain.com and PROTOCOL=https
 DOMAIN=
 
 PROTOCOL=
@@ -10292,9 +10319,27 @@ SENTRY_ENVIRONMENT=
 
 SENTRY_DSH_URL=
 
-# deploy_kube.sh requirements
-HARBOR_USERNAME=
+SENTRY_ORG=
+SENTRY_PROJECT=
 
+# Sentry Auth Token for CI/CD deployments (used in Jenkinsfile)
+SENTRY_AUTH_TOKEN=
+
+# Harbor Configuration
+HARBOR_URL=https://harbor.arpansahu.space
+HARBOR_USERNAME=
 HARBOR_PASSWORD=
+
+# Docker Registry Configuration
+DOCKER_REGISTRY=harbor.arpansahu.space
+DOCKER_REPOSITORY=library
+DOCKER_IMAGE_NAME=numerical
+DOCKER_IMAGE_TAG=latest
+
+# Jenkins/Deployment Configuration
+ENV_PROJECT_NAME=numerical
+DOCKER_PORT=8003
+SERVER_NAME=numerical.arpansahu.space
+JENKINS_DOMAIN=jenkins.arpansahu.space
 
 
