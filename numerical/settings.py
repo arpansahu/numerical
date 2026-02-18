@@ -155,10 +155,11 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
+# STATIC_ROOT is needed for collectstatic regardless of USE_S3 setting
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 if not USE_S3:
     STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     MEDIA_URL = '/media/'
 else:
     AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
@@ -287,7 +288,10 @@ else:
 # Get the current git commit hash
 def get_git_commit_hash():
     try:
-        return subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8').strip()
+        return subprocess.check_output(
+            ['git', 'rev-parse', 'HEAD'], 
+            stderr=subprocess.DEVNULL
+        ).decode('utf-8').strip()
     except Exception:
         return None
 
