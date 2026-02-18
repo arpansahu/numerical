@@ -8,6 +8,7 @@ pipeline {
         // Only Jenkins-computed values here (before .env is loaded)
         IMAGE_TAG = "${env.BUILD_ID}"
         COMMIT_FILE = "${env.WORKSPACE}/last_commit.txt"
+        BUILD_STATUS = 'NOT_BUILT'
     }
     stages {
         stage('Checkout') {
