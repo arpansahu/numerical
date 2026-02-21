@@ -11,18 +11,16 @@
   </title>
 
   <!--     Fonts and icons     -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <!-- Nucleo Icons -->
   <link href="{% static 'assets/css/nucleo-icons.css' %}" rel="stylesheet" />
   <link href="{% static 'assets/css/nucleo-svg.css' %}" rel="stylesheet" />
   <!-- Font Awesome Icons -->
   <link href="{% static 'fontawesome/css/all.min.css' %}" rel="stylesheet" />
-  <link href="{% static 'assets/css/nucleo-svg.css' %}" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'assets/css/soft-ui-dashboard.css' %}" rel="stylesheet" />
 
   <!-- Sentry SDK for JavaScript -->
-  <script src="https://js.sentry-cdn.com/0ee9da1087817ad2c7d9e2448e4b05c6.min.js" crossorigin="anonymous"></script>
+  <script src="{% static 'sentry.min.js' %}" crossorigin="anonymous"></script>
   
   <!-- Specific CSS goes HERE -->
   {% block stylesheets %}
