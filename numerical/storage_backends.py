@@ -3,12 +3,16 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 class StaticStorage(S3Boto3Storage):
     location = getattr(settings, 'AWS_STATIC_LOCATION', 'static')
+    default_acl = 'public-read'  # Make static files publicly accessible
+    querystring_auth = False  # Don't use signed URLs for static files
     addressing_style = getattr(settings, 'AWS_S3_ADDRESSING_STYLE', 'auto')
     signature_version = getattr(settings, 'AWS_S3_SIGNATURE_VERSION', 's3v4')
     verify = getattr(settings, 'AWS_S3_VERIFY', True)
 
 class PublicMediaStorage(S3Boto3Storage):
     location = getattr(settings, 'AWS_PUBLIC_MEDIA_LOCATION', 'media')
+    default_acl = 'public-read'  # Make media files publicly accessible
+    querystring_auth = False  # Don't use signed URLs for public media
     file_overwrite = False
     addressing_style = getattr(settings, 'AWS_S3_ADDRESSING_STYLE', 'auto')
     signature_version = getattr(settings, 'AWS_S3_SIGNATURE_VERSION', 's3v4')

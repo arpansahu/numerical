@@ -237,6 +237,9 @@ else:
             },
         },
     }
+    
+    # For Django < 4.2, use STATICFILES_STORAGE for static files
+    STATICFILES_STORAGE = f'{PROJECT_NAME}.storage_backends.StaticStorage'
 
 # Development settings (for local media/static handling)
 
