@@ -5,6 +5,23 @@ import pytest
 import os
 from django.test import Client
 from django.contrib.auth import get_user_model
+from playwright.sync_api import Browser
+
+
+@pytest.fixture(scope="session")
+def context(browser: Browser):
+    context = browser.new_context()
+    yield context
+    context.close()
+
+
+@pytest.fixture
+def page(context, server_url):
+    page = context.new_page()
+    page.set_default_timeout(60000)
+    page.set_default_navigation_timeout(60000)
+    yield page
+    page.close()
 
 
 @pytest.fixture
